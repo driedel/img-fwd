@@ -1,0 +1,9 @@
+services:
+  img-fwd:
+    networks:
+      - external-net
+
+networks:
+  external-net:
+    name: ${EXTERNAL_NETWORK}
+    external: true

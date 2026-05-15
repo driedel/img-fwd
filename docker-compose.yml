@@ -1,0 +1,11 @@
+services:
+  img-fwd:
+    image: driedel/img-fwd:latest
+    build: .
+    ports:
+      - "${PORT:-8888}:8888"
+    environment:
+      - PORT=8888
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - SOURCE_BASE_URL=${SOURCE_BASE_URL:-}
+    restart: unless-stopped
