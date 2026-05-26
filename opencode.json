@@ -1,11 +1,11 @@
 {
+  "$schema": "https://opencode.ai/config.json",
   "instructions": [
     "AGENTS.md"
   ],
-  "skills": [
-    "project-context",
-    "go-testing",
-    "security-check",
-    "commit-style"
-  ]
+  "skills": {
+    "paths": [
+      ".opencode/skills"
+    ]
+  }
 }

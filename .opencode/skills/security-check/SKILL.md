@@ -1,3 +1,8 @@
+---
+name: security-check
+description: Use when reviewing a commit or change for security issues: secrets, Dockerfile hardening, Go dependencies, proxy header behavior, input validation.
+---
+
 # Security Check
 
 ## Before committing changes, verify:
