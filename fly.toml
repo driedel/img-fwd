@@ -6,7 +6,7 @@ primary_region = "iad"
 
 [env]
   PORT = "8888"
-  SOURCE_BASE_URL = "https://img-fwd.driedel.dev"
+  SOURCE_BASE_URL = "http://img-fwd-demo-static.internal"
   ALLOWED_ORIGINS = "img-fwd.driedel.dev"
 
 [[services]]

@@ -478,6 +478,112 @@ body {
 }
 
 /* ========================================
+   How It Works Section
+   ======================================== */
+
+.how-it-works { text-align: center; }
+
+.architecture-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 40px 0;
+  flex-wrap: wrap;
+}
+
+.arch-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arch-box {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px 24px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  min-width: 120px;
+  text-align: center;
+}
+
+.arch-box small {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+.arch-proxy {
+  border-color: var(--accent);
+  background: rgba(47, 129, 247, 0.1);
+}
+
+.arch-imgproxy {
+  border-color: var(--success);
+  background: rgba(63, 185, 80, 0.1);
+}
+
+.arch-origin {
+  border-color: var(--warning);
+  background: rgba(210, 153, 34, 0.1);
+}
+
+.arch-arrow {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+}
+
+.url-examples {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.url-example {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.url-example:last-child { margin-bottom: 0; }
+
+.url-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  min-width: 180px;
+  font-weight: 500;
+}
+
+.url-code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  background: var(--code-bg);
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.url-note {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ========================================
    File Comparison Section
    ======================================== */
 

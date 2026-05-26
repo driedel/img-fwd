@@ -1,0 +1,13 @@
+app = "img-fwd-demo-static"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[[services]]
+  internal_port = 80
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  # No [[services.ports]] = internal access only via .internal DNS

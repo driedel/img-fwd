@@ -40,40 +40,68 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 
 ## Demo Site
 
-A live demo is hosted at `https://img-fwd.driedel.dev` (GitHub Pages) showcasing img-fwd capabilities.
+A live demo is hosted at `https://img-fwd.driedel.dev` showcasing img-fwd capabilities.
 
 ### Architecture
 
+The img-fwd proxy sits **in front** of the origin. All requests go through the proxy — images without params pass through, images with transformation params are processed.
+
 ```
-GitHub Pages (img-fwd.driedel.dev)  →  serves demo/ folder (HTML/CSS/JS + original images)
-         ▲
-         │  SOURCE_BASE_URL
-    Fly.io (cdn.img-fwd.driedel.dev)  →  img-fwd proxy (scale-to-zero, free tier)
-         │
-    imgproxy (internal)  →  transforms images (AVIF, WebP, resize, etc.)
+                          ┌─────────────────────────────────────┐
+                          │         img-fwd.driedel.dev         │
+                          │         (Cloudflare DNS)            │
+                          └───────────────┬─────────────────────┘
+                                          │
+                                          ▼
+                          ┌─────────────────────────────────────┐
+                          │           Fly.io (free)           │
+                          │      img-fwd proxy container      │
+                          │  ┌─────────────────────────────┐  │
+                          │  │  HTML/CSS/JS → pass through │  │
+                          │  │  /images/photo.jpg → origin │  │
+                          │  │  /photo.jpg?rs=800 → imgproxy│ │
+                          │  └─────────────────────────────┘  │
+                          └───────────────┬─────────────────────┘
+                                          │
+                          ┌───────────────┴─────────────────────┐
+                          │                                     │
+                          ▼                                     ▼
+          ┌─────────────────────────────┐      ┌─────────────────────────────┐
+          │   nginx internal app        │      │   imgproxy (internal)       │
+          │   img-fwd-demo-static       │      │   transforms images           │
+          │   serves demo/ folder       │      │   (AVIF, WebP, resize, etc) │
+          └─────────────────────────────┘      └─────────────────────────────┘
 ```
+
+### How the proxy works in this setup
+
+1. User requests `img-fwd.driedel.dev/index.html` → proxy fetches from nginx internal app → returns HTML
+2. User requests `img-fwd.driedel.dev/images/photo.jpg` → proxy fetches from nginx internal app → returns original
+3. User requests `img-fwd.driedel.dev/images/photo.jpg?rs=800` → proxy processes via imgproxy → returns optimized AVIF
 
 ### Deploy the demo
 
-1. **Generate demo images** (AI prompts listed in `demo/README.md`)
-2. **GitHub Pages:**
-   - Settings → Pages → Source: `/demo` folder
-   - Custom domain: `img-fwd.driedel.dev`
-3. **Fly.io:**
-   - `brew install flyctl` (or follow [docs](https://fly.io/docs/hands-on/install-flyctl/))
-   - `fly auth login`
+1. **Generate demo images** (AI prompts listed in `demo/README.md`) and place in `demo/images/`
+2. **Internal nginx app (serves static files):**
+   - `cd demo-static/`
+   - `fly apps create img-fwd-demo-static`
+   - `fly deploy`
+3. **Proxy app (public entrypoint):**
+   - `cd` (repo root)
    - `fly deploy` (reads `fly.toml`)
 4. **Cloudflare DNS:**
-   - CNAME `img-fwd.driedel.dev` → `driedel.github.io` (for GitHub Pages)
-   - CNAME `cdn.img-fwd.driedel.dev` → `img-fwd-demo.fly.dev` (for Fly.io proxy)
+   - CNAME `img-fwd.driedel.dev` → `img-fwd-demo.fly.dev` (the proxy is the entrypoint)
+   - **No separate CDN subdomain** — the proxy IS the main domain
 
 ### Demo files
 
-- `demo/index.html` — landing page
+- `demo/index.html` — landing page (uses relative URLs like `images/photo.jpg?rs=800`)
 - `demo/css/styles.css` — responsive dark theme
-- `demo/js/main.js` — before/after sliders, Resource Timing API
-- `demo/images/` — example images (originals served by GitHub Pages)
-- `fly.toml` — Fly.io configuration (scale-to-zero, free tier)
+- `demo/js/main.js` — Resource Timing API for live size measurements
+- `demo/images/` — example images (served by nginx internal app)
+- `fly.toml` — Fly.io proxy configuration with `SOURCE_BASE_URL` pointing to internal nginx app
+- `demo-static/Dockerfile` — nginx:alpine serving `demo/` folder
+- `demo-static/fly.toml` — Fly.io internal app (no exposed ports)
 
 ## Entrypoints
 
