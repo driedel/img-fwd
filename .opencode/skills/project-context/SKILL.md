@@ -1,3 +1,8 @@
+---
+name: project-context
+description: Use when asked about how img-fwd works, its architecture, Go source files, query params, routing rules, env vars, Docker setup, or any general project question.
+---
+
 # Project Context — img-fwd
 
 ## What this is

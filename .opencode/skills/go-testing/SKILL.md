@@ -1,3 +1,8 @@
+---
+name: go-testing
+description: Use when running, writing, or debugging Go tests in this repo. Go is NOT installed locally — all go commands must run inside Docker.
+---
+
 # Go Testing
 
 > **Go is NOT installed locally.** All `go` commands must run inside a Docker container.

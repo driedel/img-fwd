@@ -1,3 +1,8 @@
+---
+name: commit-style
+description: Use when writing a git commit message for this repo. Enforces Conventional Commits format in English with the types and scopes used here.
+---
+
 # Commit Style
 
 ## Language

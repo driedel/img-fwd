@@ -1,0 +1,30 @@
+app = "img-fwd"
+primary_region = "gru"
+
+[build]
+  image = "driedel/img-fwd:latest"
+
+[env]
+  PORT = "8888"
+  SOURCE_BASE_URL = "http://img-fwd-demo-static.internal"
+  ALLOWED_ORIGINS = "img-fwd.driedel.dev,img-fwd.fly.dev"
+
+[[services]]
+  internal_port = 8888
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0  # scale-to-zero for free tier
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "1gb"  # imgproxy needs more memory for image processing

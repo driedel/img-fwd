@@ -38,6 +38,94 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 - **Query param forwarding:** non-imgproxy params (`v=2`, `cache=1`, etc.) are forwarded to the origin URL, not imgproxy.
 - **Health:** `GET /healthz` → `200 ok`.
 
+## Demo Site
+
+A live demo is hosted at `https://img-fwd.driedel.dev` showcasing img-fwd capabilities.
+
+### Architecture
+
+The img-fwd proxy sits **in front** of the origin. All requests go through the proxy — images without params pass through, images with transformation params are processed.
+
+```
+                          ┌─────────────────────────────────────┐
+                          │         img-fwd.driedel.dev         │
+                          │         (Cloudflare DNS)            │
+                          └───────────────┬─────────────────────┘
+                                          │
+                                          ▼
+                          ┌─────────────────────────────────────┐
+                          │           Fly.io (free)           │
+                          │      img-fwd proxy container      │
+                          │  ┌─────────────────────────────┐  │
+                          │  │  HTML/CSS/JS → pass through │  │
+                          │  │  /images/photo.jpg → origin │  │
+                          │  │  /photo.jpg?rs=800 → imgproxy│ │
+                          │  └─────────────────────────────┘  │
+                          └───────────────┬─────────────────────┘
+                                          │
+                          ┌───────────────┴─────────────────────┐
+                          │                                     │
+                          ▼                                     ▼
+          ┌─────────────────────────────┐      ┌─────────────────────────────┐
+          │   nginx internal app        │      │   imgproxy (internal)       │
+          │   img-fwd-demo-static       │      │   transforms images           │
+          │   serves demo/ folder       │      │   (AVIF, WebP, resize, etc) │
+          └─────────────────────────────┘      └─────────────────────────────┘
+```
+
+### How the proxy works in this setup
+
+1. User requests `img-fwd.driedel.dev/index.html` → proxy fetches from nginx internal app → returns HTML
+2. User requests `img-fwd.driedel.dev/images/photo.jpg` → proxy fetches from nginx internal app → returns original
+3. User requests `img-fwd.driedel.dev/images/photo.jpg?rs=800` → proxy processes via imgproxy → returns optimized AVIF
+
+### Deploy the demo
+
+#### Automated deployment (recommended)
+
+Use the deploy script to deploy both apps:
+
+```bash
+# Deploy both proxy and nginx
+./scripts/deploy.sh
+
+# Deploy only proxy (when fly.toml changes)
+./scripts/deploy.sh --proxy
+
+# Deploy only nginx (when demo/ files change)
+./scripts/deploy.sh --nginx
+```
+
+**Prerequisites:**
+- `flyctl` CLI installed (`brew install flyctl` on macOS)
+- Authenticated with Fly.io (`flyctl auth login`)
+
+**OpenCode skill:** When asked to deploy, use the `deploy` skill which provides step-by-step instructions and verification commands.
+
+#### Manual deployment
+
+1. **Generate demo images** (AI prompts listed below) and place in `demo/app/images/`
+2. **Internal nginx app (serves static files):**
+   - `cd demo/`
+   - `fly apps create img-fwd-demo-static`
+   - `fly deploy`
+3. **Proxy app (public entrypoint):**
+   - `cd` (repo root)
+   - `fly deploy` (reads `fly.toml`)
+4. **Cloudflare DNS:**
+   - CNAME `img-fwd.driedel.dev` → `img-fwd-demo.fly.dev` (the proxy is the entrypoint)
+   - **No separate CDN subdomain** — the proxy IS the main domain
+
+### Demo files
+
+- `demo/app/index.html` — landing page (uses relative URLs like `images/photo.jpg?rs=800`)
+- `demo/app/css/styles.css` — responsive dark theme
+- `demo/app/js/main.js` — Resource Timing API for live size measurements
+- `demo/app/images/` — example images (served by nginx internal app)
+- `fly.toml` — Fly.io proxy configuration with `SOURCE_BASE_URL` pointing to internal nginx app
+- `demo/Dockerfile` — nginx:alpine serving `app/` folder
+- `demo/fly.toml` — Fly.io internal app (no exposed ports)
+
 ## Entrypoints
 
 - App entry: `app/main.go` (`package main`)

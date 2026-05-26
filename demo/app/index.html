@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>img-fwd — Transparent Image Optimization</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <img src="images/logo.svg" alt="img-fwd logo" class="logo">
+      <p class="tagline">Transparent image optimization — zero changes to your URLs</p>
+      <div class="badges">
+        <span class="badge">Zero Cost</span>
+        <span class="badge">Open Source</span>
+        <span class="badge">Production Ready</span>
+      </div>
+      <div class="cta-links">
+        <a href="https://github.com/driedel/img-fwd" class="btn btn-primary" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+        <a href="https://hub.docker.com/r/driedel/img-fwd" class="btn btn-secondary" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185zm-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.083.186.185.186zm0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186zm-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.186.185.186zm-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.186.186.186zm5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185zm-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185zm-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.185-.186h-2.119a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185zm-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185zm-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.185-.186h-2.12a.186.186 0 00-.185.186v1.887c0 .102.084.185.186.185zM23.763 10.89c-.065-.043-.534-.364-1.084-.18.15.19.323.553.334 1.013 0 0 .197.835.3 1.432.093-.1.184-.208.27-.323.45-.585.7-1.324.7-2.093 0-.332-.044-.65-.125-.954a9.04 9.04 0 01-.395 1.105z"/></svg>
+          Docker Hub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- How it Works -->
+    <section class="section how-it-works" id="how-it-works">
+      <div class="container">
+        <h2>How It Works</h2>
+        <p class="section-desc">No URL changes. No code changes. Just add query parameters.</p>
+        
+        <div class="architecture-diagram">
+          <div class="arch-step">
+            <div class="arch-box">Browser</div>
+            <div class="arch-arrow">→</div>
+          </div>
+          <div class="arch-step">
+            <div class="arch-box arch-proxy">img-fwd<br><small>proxy</small></div>
+            <div class="arch-arrow">→</div>
+          </div>
+          <div class="arch-step">
+            <div class="arch-box arch-imgproxy">imgproxy<br><small>transform</small></div>
+            <div class="arch-arrow">↔</div>
+          </div>
+          <div class="arch-step">
+            <div class="arch-box arch-origin">Your Origin<br><small>images</small></div>
+          </div>
+        </div>
+
+        <div class="url-examples">
+          <div class="url-example">
+            <span class="url-label">Original:</span>
+            <code class="url-code">https://example.com/images/photo.jpg</code>
+          </div>
+          <div class="url-example">
+            <span class="url-label">Optimized (same URL!):</span>
+            <code class="url-code">https://example.com/images/photo.jpg?rs=800</code>
+          </div>
+          <p class="url-note">The proxy intercepts requests with transformation params and returns optimized images automatically.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- File Size Comparison -->
+    <section class="section file-comparison" id="file-comparison">
+      <div class="container">
+        <h2>Real File Size Comparison</h2>
+        <p class="section-desc">Same image URLs. Just add <code>?rs=width</code> to optimize.</p>
+        
+        <div class="file-comparison-grid">
+          <!-- Photo -->
+          <div class="file-card">
+            <div class="file-card-header">
+              <h3>Coastal Landscape</h3>
+              <span class="file-tag">2.3 MB original</span>
+            </div>
+            <div class="file-preview">
+              <img src="images/photo.jpg" alt="Original photo" loading="lazy">
+            </div>
+            <div class="file-sizes">
+              <div class="file-size-row">
+                <span class="file-label">Original</span>
+                <span class="file-value" id="size-photo-orig">2.3 MB</span>
+              </div>
+              <div class="file-size-row highlight">
+                <span class="file-label">AVIF <code>?rs=1200</code></span>
+                <span class="file-value" id="size-photo-avif">Loading...</span>
+              </div>
+              <div class="file-size-row highlight">
+                <span class="file-label">WebP <code>?f=webp&rs=1200</code></span>
+                <span class="file-value" id="size-photo-webp">Loading...</span>
+              </div>
+              <div class="file-savings" id="savings-photo"></div>
+            </div>
+          </div>
+
+          <!-- Portrait -->
+          <div class="file-card">
+            <div class="file-card-header">
+              <h3>Portrait</h3>
+              <span class="file-tag">4.1 MB original</span>
+            </div>
+            <div class="file-preview">
+              <img src="images/portrait.png" alt="Original portrait" loading="lazy">
+            </div>
+            <div class="file-sizes">
+              <div class="file-size-row">
+                <span class="file-label">Original</span>
+                <span class="file-value" id="size-portrait-orig">4.1 MB</span>
+              </div>
+              <div class="file-size-row highlight">
+                <span class="file-label">AVIF <code>?rs=800</code></span>
+                <span class="file-value" id="size-portrait-avif">Loading...</span>
+              </div>
+              <div class="file-size-row highlight">
+                <span class="file-label">WebP <code>?f=webp&rs=800</code></span>
+                <span class="file-value" id="size-portrait-webp">Loading...</span>
+              </div>
+              <div class="file-savings" id="savings-portrait"></div>
+            </div>
+          </div>
+
+          <!-- Animated GIF -->
+          <div class="file-card">
+            <div class="file-card-header">
+              <h3>Animation</h3>
+              <span class="file-tag">1.4 MB original</span>
+            </div>
+            <div class="file-preview">
+              <img src="images/animated.gif" alt="Original animation" loading="lazy">
+            </div>
+            <div class="file-sizes">
+              <div class="file-size-row">
+                <span class="file-label">Original GIF</span>
+                <span class="file-value" id="size-gif-orig">1.4 MB</span>
+              </div>
+              <div class="file-size-row highlight">
+                <span class="file-label">WebP <code>?rs=600</code></span>
+                <span class="file-value" id="size-gif-webp">Loading...</span>
+              </div>
+              <div class="file-savings" id="savings-gif"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resize Gallery -->
+    <section class="section resize-gallery" id="resize-gallery">
+      <div class="container">
+        <h2>Resize & Compression</h2>
+        <p class="section-desc">Add <code>?rs=width</code> to any image. The proxy returns the perfect size.</p>
+
+        <div class="resize-category">
+          <h3>photo.jpg — Original: 2.3 MB</h3>
+          <div class="resize-grid">
+            <div class="resize-item">
+              <img src="images/photo.jpg?rs=400" alt="400px" loading="lazy" onload="measureSize(this)">
+              <div class="resize-info">
+                <code>?rs=400</code>
+                <span class="resize-size" data-src="images/photo.jpg?rs=400">—</span>
+                <span class="resize-dim">400px wide</span>
+              </div>
+            </div>
+            <div class="resize-item">
+              <img src="images/photo.jpg?rs=800" alt="800px" loading="lazy" onload="measureSize(this)">
+              <div class="resize-info">
+                <code>?rs=800</code>
+                <span class="resize-size" data-src="images/photo.jpg?rs=800">—</span>
+                <span class="resize-dim">800px wide</span>
+              </div>
+            </div>
+            <div class="resize-item">
+              <img src="images/photo.jpg?rs=1200" alt="1200px" loading="lazy" onload="measureSize(this)">
+              <div class="resize-info">
+                <code>?rs=1200</code>
+                <span class="resize-size" data-src="images/photo.jpg?rs=1200">—</span>
+                <span class="resize-dim">1200px wide</span>
+              </div>
+            </div>
+            <div class="resize-item">
+              <img src="images/photo.jpg?rs=1920" alt="1920px" loading="lazy" onload="measureSize(this)">
+              <div class="resize-info">
+                <code>?rs=1920</code>
+                <span class="resize-size" data-src="images/photo.jpg?rs=1920">—</span>
+                <span class="resize-dim">1920px wide (full)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="resize-category">
+          <h3>portrait.png — Original: 4.1 MB</h3>
+          <div class="resize-grid">
+            <div class="resize-item">
+              <img src="images/portrait.png?rs=400" alt="400px" loading="lazy" onload="measureSize(this)">
+              <div class="resize-info">
+                <code>?rs=400</code>
+                <span class="resize-size" data-src="images/portrait.png?rs=400">—</span>
+                <span class="resize-dim">400px wide</span>
+              </div>
+            </div>
+            <div class="resize-item">
+              <img src="images/portrait.png?rs=800" alt="800px" loading="lazy" onload="measureSize(this)">
+              <div class="resize-info">
+                <code>?rs=800</code>
+                <span class="resize-size" data-src="images/portrait.png?rs=800">—</span>
+                <span class="resize-dim">800px wide</span>
+              </div>
+            </div>
+            <div class="resize-item">
+              <img src="images/portrait.png?rs=1200" alt="1200px" loading="lazy" onload="measureSize(this)">
+              <div class="resize-info">
+                <code>?rs=1200</code>
+                <span class="resize-size" data-src="images/portrait.png?rs=1200">—</span>
+                <span class="resize-dim">1200px wide</span>
+              </div>
+            </div>
+            <div class="resize-item">
+              <img src="images/portrait.png?rs=1920" alt="1920px" loading="lazy" onload="measureSize(this)">
+              <div class="resize-info">
+                <code>?rs=1920</code>
+                <span class="resize-size" data-src="images/portrait.png?rs=1920">—</span>
+                <span class="resize-dim">1920px wide (full)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Format Conversion -->
+    <section class="section format-gallery" id="format-gallery">
+      <div class="container">
+        <h2>Format Conversion</h2>
+        <p class="section-desc">Automatic format detection or explicit control with <code>?f=format</code>.</p>
+
+        <div class="format-grid">
+          <div class="format-item">
+            <h4>Auto AVIF <code>?rs=800</code></h4>
+            <img src="images/photo.jpg?rs=800" alt="Auto AVIF" loading="lazy">
+            <span class="format-note">JPG automatically converted to AVIF</span>
+          </div>
+          <div class="format-item">
+            <h4>Explicit WebP <code>?f=webp&rs=800</code></h4>
+            <img src="images/photo.jpg?f=webp&rs=800" alt="WebP" loading="lazy">
+            <span class="format-note">Force WebP format</span>
+          </div>
+          <div class="format-item">
+            <h4>GIF → WebP <code>?rs=400</code></h4>
+            <img src="images/animated.gif?rs=400" alt="GIF to WebP" loading="lazy">
+            <span class="format-note">Animated GIF converted to animated WebP</span>
+          </div>
+          <div class="format-item">
+            <h4>SVG Pass-through <code>?rs=200</code></h4>
+            <img src="images/icon.svg?rs=200" alt="SVG" loading="lazy" style="object-fit: contain; background: #fff; padding: 20px;">
+            <span class="format-note">Vector format served as-is</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quality & Effects -->
+    <section class="section effects-gallery" id="effects-gallery">
+      <div class="container">
+        <h2>Quality & Effects</h2>
+        <p class="section-desc">Fine-tune output with quality, blur, and crop parameters.</p>
+
+        <div class="effects-category">
+          <h3>Quality Control</h3>
+          <div class="effects-grid">
+            <div class="effects-item">
+              <img src="images/photo.jpg?q=90&rs=600" alt="Quality 90" loading="lazy">
+              <code>?q=90&rs=600</code>
+              <span>Near lossless</span>
+            </div>
+            <div class="effects-item">
+              <img src="images/photo.jpg?q=75&rs=600" alt="Quality 75" loading="lazy">
+              <code>?q=75&rs=600</code>
+              <span>Balanced (recommended)</span>
+            </div>
+            <div class="effects-item">
+              <img src="images/photo.jpg?q=50&rs=600" alt="Quality 50" loading="lazy">
+              <code>?q=50&rs=600</code>
+              <span>Maximum compression</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="effects-category">
+          <h3>Blur Effects</h3>
+          <div class="effects-grid">
+            <div class="effects-item">
+              <img src="images/photo.jpg?blur=2&rs=600" alt="Blur 2" loading="lazy">
+              <code>?blur=2&rs=600</code>
+              <span>Subtle</span>
+            </div>
+            <div class="effects-item">
+              <img src="images/photo.jpg?blur=5&rs=600" alt="Blur 5" loading="lazy">
+              <code>?blur=5&rs=600</code>
+              <span>Medium</span>
+            </div>
+            <div class="effects-item">
+              <img src="images/photo.jpg?blur=10&rs=600" alt="Blur 10" loading="lazy">
+              <code>?blur=10&rs=600</code>
+              <span>Heavy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="effects-category">
+          <h3>Smart Crop</h3>
+          <div class="effects-grid">
+            <div class="effects-item">
+              <img src="images/photo.jpg?g=sm&rs=400:300" alt="Smart crop" loading="lazy">
+              <code>?g=sm&rs=400:300</code>
+              <span>Smart gravity</span>
+            </div>
+            <div class="effects-item">
+              <img src="images/photo.jpg?g=ce&rs=400:300" alt="Center crop" loading="lazy">
+              <code>?g=ce&rs=400:300</code>
+              <span>Center gravity</span>
+            </div>
+            <div class="effects-item">
+              <img src="images/photo.jpg?g=no&rs=400:300" alt="North crop" loading="lazy">
+              <code>?g=no&rs=400:300</code>
+              <span>North gravity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical Reference -->
+    <section class="section reference" id="reference">
+      <div class="container">
+        <h2>Supported Parameters</h2>
+        <div class="param-table-wrapper">
+          <table class="param-table">
+            <thead>
+              <tr>
+                <th>Param</th>
+                <th>Description</th>
+                <th>Example</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>f</code></td>
+                <td>Output format</td>
+                <td><code>?f=avif</code>, <code>?f=webp</code></td>
+                <td>Force AVIF or WebP</td>
+              </tr>
+              <tr>
+                <td><code>rs</code></td>
+                <td>Resize width or width:height</td>
+                <td><code>?rs=800</code>, <code>?rs=800:600</code></td>
+                <td>Fit to dimensions</td>
+              </tr>
+              <tr>
+                <td><code>g</code></td>
+                <td>Gravity (crop focal point)</td>
+                <td><code>?g=sm</code>, <code>?g=ce</code></td>
+                <td>Smart or center crop</td>
+              </tr>
+              <tr>
+                <td><code>q</code></td>
+                <td>Quality 1-100</td>
+                <td><code>?q=80</code></td>
+                <td>Compression level</td>
+              </tr>
+              <tr>
+                <td><code>blur</code></td>
+                <td>Blur intensity</td>
+                <td><code>?blur=5</code></td>
+                <td>Gaussian blur</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">Non-transformation params (e.g., <code>?v=2</code>) are forwarded to the origin URL.</p>
+      </div>
+    </section>
+
+    <!-- Usage Snippets -->
+    <section class="section snippets" id="snippets">
+      <div class="container">
+        <h2>Usage</h2>
+        <div class="snippet-grid">
+          <div class="snippet-card">
+            <h3>In your HTML</h3>
+            <pre class="code-block"><code>&lt;!-- Original --&gt;
+&lt;img src="https://example.com/images/photo.jpg"&gt;
+
+&lt;!-- Optimized via img-fwd --&gt;
+&lt;!-- Just add ?rs=width — same URL! --&gt;
+&lt;img src="https://example.com/images/photo.jpg?rs=800"&gt;
+
+&lt;!-- Auto-format: .jpg becomes AVIF automatically --&gt;
+&lt;img src="https://example.com/images/photo.jpg?rs=600"&gt;</code></pre>
+          </div>
+          <div class="snippet-card">
+            <h3>With Docker</h3>
+            <pre class="code-block"><code>docker run -d \
+  -p 8888:8888 \
+  -e ALLOWED_ORIGINS=example.com \
+  -e SOURCE_BASE_URL=https://your-origin.com \
+  driedel/img-fwd:latest</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>img-fwd — <a href="https://github.com/driedel/img-fwd">GitHub</a> — <a href="https://hub.docker.com/r/driedel/img-fwd">Docker Hub</a></p>
+      <p class="copyright">Open source under MIT License</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
