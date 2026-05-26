@@ -9,7 +9,7 @@
 (function () {
   'use strict';
 
-  const PROXY_BASE = 'https://cdn.img-fwd.driedel.dev';
+  const PROXY_BASE = 'https://img-fwd.driedel.dev';
 
   // ========================================
   // Utilities
