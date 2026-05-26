@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -142,8 +144,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// Use the Host header to reconstruct the original image URL transparently.
 	// Strip port if present (e.g. "cdn.examplesite.com:443" → "cdn.examplesite.com").
 	host := r.Host
-	if h, _, err := splitHostPort(host); err == nil {
+	if h, _, err := net.SplitHostPort(host); err == nil {
 		host = h
+	}
+
+	// Sanitize path to prevent directory traversal (e.g. /../../../etc/passwd → /etc/passwd).
+	cleanPath := path.Clean(r.URL.Path)
+	if cleanPath == "." {
+		cleanPath = "/"
 	}
 
 	if !isAllowed(host) {
@@ -155,9 +163,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	var originalURL string
 	if sourceBaseURL != "" {
-		originalURL = sourceBaseURL + r.URL.Path
+		originalURL = sourceBaseURL + cleanPath
 	} else {
-		originalURL = "https://" + host + r.URL.Path
+		originalURL = "https://" + host + cleanPath
 	}
 
 	// Strip imgproxy params from query, forward the rest to the origin.
@@ -175,14 +183,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	auto := ""
 	if q.Get("f") == "" {
-		auto = autoFormat(r.URL.Path)
+		auto = autoFormat(cleanPath)
 	}
 	processingOptions := buildProcessingOptions(q, auto)
 
 	// Route through imgproxy only when transformation params are present on an image.
 	// Everything else (HTML, JS, CSS, images without params) passes directly to the origin.
 	var targetURL string
-	if processingOptions != "" && hasImageExtension(r.URL.Path) {
+	if processingOptions != "" && hasImageExtension(cleanPath) {
 		targetURL = imgproxyURL + fmt.Sprintf("/insecure/%s/plain/%s", processingOptions, originalURL)
 	} else {
 		targetURL = originalURL
@@ -221,15 +229,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-}
-
-// splitHostPort separates host and port. Returns error if no port present.
-func splitHostPort(hostport string) (host, port string, err error) {
-	idx := strings.LastIndex(hostport, ":")
-	if idx == -1 {
-		return "", "", fmt.Errorf("no port")
-	}
-	return hostport[:idx], hostport[idx+1:], nil
 }
 
 func main() {
