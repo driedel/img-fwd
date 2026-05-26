@@ -41,6 +41,11 @@ docker run --rm -v "$PWD/app:/app" -w /app golang:1.22-alpine go list -m all
 - Ensure `ALLOWED_ORIGINS` restricts origins in production (empty = allow all, which logs a warning).
 - Ensure `SOURCE_BASE_URL` cannot be used to open redirect vulnerabilities.
 
+> **Transparent proxy is intentional and safe.** `Cookie` and `Authorization` headers are forwarded intact to the downstream target (either imgproxy or origin). This is correct because:
+> - When routed to **imgproxy**, it is a local trusted process inside the same container; imgproxy does **not** re-forward those headers to the origin — it fetches the origin image itself with a fresh HTTP request.
+> - When routed **directly to origin** (passthrough), the client headers are meant to reach the origin unchanged.
+> Therefore, stripping `Cookie`/`Authorization` is unnecessary and would break legitimate use cases.
+
 ### 5. Input validation
 
 - Query params are parsed with `url.Values` — ensure no path traversal in `r.URL.Path`.
