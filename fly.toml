@@ -1,5 +1,5 @@
-app = "img-fwd-demo"
-primary_region = "iad"
+app = "img-fwd"
+primary_region = "gru"
 
 [build]
   image = "driedel/img-fwd:latest"
@@ -7,7 +7,7 @@ primary_region = "iad"
 [env]
   PORT = "8888"
   SOURCE_BASE_URL = "http://img-fwd-demo-static.internal"
-  ALLOWED_ORIGINS = "img-fwd.driedel.dev"
+  ALLOWED_ORIGINS = "img-fwd.driedel.dev,img-fwd.fly.dev"
 
 [[services]]
   internal_port = 8888
