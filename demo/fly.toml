@@ -8,9 +8,12 @@ primary_region = "gru"
   internal_port = 80
   protocol = "tcp"
   auto_start_machines = true
-  auto_stop_machines = true
-  min_machines_running = 0
-  # No [[services.ports]] = internal access only via .internal DNS
+  auto_stop_machines = false
+  min_machines_running = 1
+  
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
 
 [[vm]]
   cpu_kind = "shared"
