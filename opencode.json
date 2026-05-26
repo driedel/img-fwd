@@ -1,0 +1,11 @@
+{
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "skills": [
+    "project-context",
+    "go-testing",
+    "security-check",
+    "commit-style"
+  ]
+}
