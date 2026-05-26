@@ -23,3 +23,8 @@ primary_region = "gru"
   [[services.ports]]
     handlers = ["tls", "http"]
     port = 443
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "1gb"  # imgproxy needs more memory for image processing
