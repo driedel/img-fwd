@@ -1,0 +1,25 @@
+app = "img-fwd-demo"
+primary_region = "iad"
+
+[build]
+  image = "driedel/img-fwd:latest"
+
+[env]
+  PORT = "8888"
+  SOURCE_BASE_URL = "https://img-fwd.driedel.dev"
+  ALLOWED_ORIGINS = "img-fwd.driedel.dev"
+
+[[services]]
+  internal_port = 8888
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0  # scale-to-zero for free tier
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443

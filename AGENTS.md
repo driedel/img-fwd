@@ -38,6 +38,43 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 - **Query param forwarding:** non-imgproxy params (`v=2`, `cache=1`, etc.) are forwarded to the origin URL, not imgproxy.
 - **Health:** `GET /healthz` → `200 ok`.
 
+## Demo Site
+
+A live demo is hosted at `https://img-fwd.driedel.dev` (GitHub Pages) showcasing img-fwd capabilities.
+
+### Architecture
+
+```
+GitHub Pages (img-fwd.driedel.dev)  →  serves demo/ folder (HTML/CSS/JS + original images)
+         ▲
+         │  SOURCE_BASE_URL
+    Fly.io (cdn.img-fwd.driedel.dev)  →  img-fwd proxy (scale-to-zero, free tier)
+         │
+    imgproxy (internal)  →  transforms images (AVIF, WebP, resize, etc.)
+```
+
+### Deploy the demo
+
+1. **Generate demo images** (AI prompts listed in `demo/README.md`)
+2. **GitHub Pages:**
+   - Settings → Pages → Source: `/demo` folder
+   - Custom domain: `img-fwd.driedel.dev`
+3. **Fly.io:**
+   - `brew install flyctl` (or follow [docs](https://fly.io/docs/hands-on/install-flyctl/))
+   - `fly auth login`
+   - `fly deploy` (reads `fly.toml`)
+4. **Cloudflare DNS:**
+   - CNAME `img-fwd.driedel.dev` → `driedel.github.io` (for GitHub Pages)
+   - CNAME `cdn.img-fwd.driedel.dev` → `img-fwd-demo.fly.dev` (for Fly.io proxy)
+
+### Demo files
+
+- `demo/index.html` — landing page
+- `demo/css/styles.css` — responsive dark theme
+- `demo/js/main.js` — before/after sliders, Resource Timing API
+- `demo/images/` — example images (originals served by GitHub Pages)
+- `fly.toml` — Fly.io configuration (scale-to-zero, free tier)
+
 ## Entrypoints
 
 - App entry: `app/main.go` (`package main`)
