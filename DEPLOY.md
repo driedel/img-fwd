@@ -14,14 +14,14 @@ img-fwd.driedel.dev (Cloudflare)
          ▼
 ┌─────────────────────┐
 │  img-fwd-demo-static│  ← Private nginx (nginx:alpine)
-│  Fly.io             │     Serves demo/ folder
+│  Fly.io             │     Serves demo/app/ folder
 └─────────────────────┘
 ```
 
 ## Step 1: Deploy internal nginx app
 
 ```bash
-cd /Users/daniloriedel/projects/github/img-fwd/demo-static
+cd /Users/daniloriedel/projects/github/img-fwd/demo
 fly apps create img-fwd-demo-static
 fly deploy
 ```

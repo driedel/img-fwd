@@ -81,9 +81,9 @@ The img-fwd proxy sits **in front** of the origin. All requests go through the p
 
 ### Deploy the demo
 
-1. **Generate demo images** (AI prompts listed in `demo/README.md`) and place in `demo/images/`
+1. **Generate demo images** (AI prompts listed below) and place in `demo/app/images/`
 2. **Internal nginx app (serves static files):**
-   - `cd demo-static/`
+   - `cd demo/`
    - `fly apps create img-fwd-demo-static`
    - `fly deploy`
 3. **Proxy app (public entrypoint):**
@@ -95,13 +95,13 @@ The img-fwd proxy sits **in front** of the origin. All requests go through the p
 
 ### Demo files
 
-- `demo/index.html` — landing page (uses relative URLs like `images/photo.jpg?rs=800`)
-- `demo/css/styles.css` — responsive dark theme
-- `demo/js/main.js` — Resource Timing API for live size measurements
-- `demo/images/` — example images (served by nginx internal app)
+- `demo/app/index.html` — landing page (uses relative URLs like `images/photo.jpg?rs=800`)
+- `demo/app/css/styles.css` — responsive dark theme
+- `demo/app/js/main.js` — Resource Timing API for live size measurements
+- `demo/app/images/` — example images (served by nginx internal app)
 - `fly.toml` — Fly.io proxy configuration with `SOURCE_BASE_URL` pointing to internal nginx app
-- `demo-static/Dockerfile` — nginx:alpine serving `demo/` folder
-- `demo-static/fly.toml` — Fly.io internal app (no exposed ports)
+- `demo/Dockerfile` — nginx:alpine serving `app/` folder
+- `demo/fly.toml` — Fly.io internal app (no exposed ports)
 
 ## Entrypoints
 
