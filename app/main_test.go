@@ -125,20 +125,6 @@ func TestBuildProcessingOptions(t *testing.T) {
 	}
 }
 
-// --- splitHostPort ---
-
-func TestSplitHostPort(t *testing.T) {
-	host, port, err := splitHostPort("cdn.example.com:443")
-	if err != nil || host != "cdn.example.com" || port != "443" {
-		t.Errorf("splitHostPort(\"cdn.example.com:443\") = %q, %q, %v; want \"cdn.example.com\", \"443\", nil", host, port, err)
-	}
-
-	_, _, err = splitHostPort("cdn.example.com")
-	if err == nil {
-		t.Error("splitHostPort without port should return error")
-	}
-}
-
 // --- handler ---
 
 func TestHandlerHealthz(t *testing.T) {
@@ -322,5 +308,63 @@ func TestHandlerForwardsNonImgproxyParams(t *testing.T) {
 
 	if !strings.Contains(capturedURI, "v=42") {
 		t.Errorf("expected non-imgproxy param v=42 forwarded in origin URL, got imgproxy URI %q", capturedURI)
+	}
+}
+
+func TestHandlerStripsPortFromHost(t *testing.T) {
+	var capturedURI string
+	mock := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		capturedURI = r.RequestURI
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer mock.Close()
+
+	origImgproxy, origSource, origOrigins := imgproxyURL, sourceBaseURL, allowedOrigins
+	defer func() { imgproxyURL, sourceBaseURL, allowedOrigins = origImgproxy, origSource, origOrigins }()
+
+	imgproxyURL = mock.URL
+	sourceBaseURL = ""
+	allowedOrigins = map[string]bool{"cdn.example.com": true}
+
+	req := httptest.NewRequest("GET", "/image.jpg?rs=600", nil)
+	req.Host = "cdn.example.com:443"
+	rr := httptest.NewRecorder()
+	handler(rr, req)
+
+	if rr.Code == http.StatusForbidden {
+		t.Errorf("expected host with port to be allowed, got 403")
+	}
+	if !strings.Contains(capturedURI, "cdn.example.com") {
+		t.Errorf("expected origin URL to contain clean host, got imgproxy URI %q", capturedURI)
+	}
+	if strings.Contains(capturedURI, ":443") {
+		t.Errorf("expected port to be stripped from origin URL, got imgproxy URI %q", capturedURI)
+	}
+}
+
+func TestHandlerSanitizesPathTraversal(t *testing.T) {
+	var capturedURI string
+	mock := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		capturedURI = r.RequestURI
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer mock.Close()
+
+	origImgproxy, origSource, origOrigins := imgproxyURL, sourceBaseURL, allowedOrigins
+	defer func() { imgproxyURL, sourceBaseURL, allowedOrigins = origImgproxy, origSource, origOrigins }()
+
+	imgproxyURL = mock.URL
+	sourceBaseURL = "http://origin"
+	allowedOrigins = map[string]bool{}
+
+	req := httptest.NewRequest("GET", "/../../../secret.jpg?rs=600", nil)
+	rr := httptest.NewRecorder()
+	handler(rr, req)
+
+	if strings.Contains(capturedURI, "..") {
+		t.Errorf("expected path traversal to be sanitized, got imgproxy URI %q", capturedURI)
+	}
+	if !strings.Contains(capturedURI, "/secret.jpg") {
+		t.Errorf("expected sanitized path /secret.jpg in imgproxy URI, got %q", capturedURI)
 	}
 }
