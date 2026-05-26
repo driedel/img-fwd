@@ -72,7 +72,7 @@
     <section class="section file-comparison" id="file-comparison">
       <div class="container">
         <h2>Real File Size Comparison</h2>
-        <p class="section-desc">Same image URLs. Just add <code>?rs=width</code> to optimize.</p>
+        <p class="section-desc">Same dimensions. AVIF and WebP deliver dramatically smaller files.</p>
         
         <div class="file-comparison-grid">
           <!-- Photo -->
@@ -90,11 +90,11 @@
                 <span class="file-value" id="size-photo-orig">2.3 MB</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">AVIF <code>?rs=1200</code></span>
+                <span class="file-label">AVIF (auto)</span>
                 <span class="file-value" id="size-photo-avif">Loading...</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">WebP <code>?f=webp&rs=1200</code></span>
+                <span class="file-label">WebP <code>?f=webp</code></span>
                 <span class="file-value" id="size-photo-webp">Loading...</span>
               </div>
               <div class="file-savings" id="savings-photo"></div>
@@ -116,11 +116,11 @@
                 <span class="file-value" id="size-portrait-orig">4.1 MB</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">AVIF <code>?rs=800</code></span>
+                <span class="file-label">AVIF (auto)</span>
                 <span class="file-value" id="size-portrait-avif">Loading...</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">WebP <code>?f=webp&rs=800</code></span>
+                <span class="file-label">WebP <code>?f=webp</code></span>
                 <span class="file-value" id="size-portrait-webp">Loading...</span>
               </div>
               <div class="file-savings" id="savings-portrait"></div>
@@ -142,7 +142,7 @@
                 <span class="file-value" id="size-gif-orig">1.4 MB</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">WebP <code>?rs=600</code></span>
+                <span class="file-label">WebP <code>?f=webp</code></span>
                 <span class="file-value" id="size-gif-webp">Loading...</span>
               </div>
               <div class="file-savings" id="savings-gif"></div>
@@ -319,17 +319,17 @@
           <h3>Smart Crop</h3>
           <div class="effects-grid">
             <div class="effects-item">
-              <img src="images/photo.jpg?g=sm&rs=400:300" alt="Smart crop" loading="lazy">
+              <img src="images/portrait.png?g=sm&rs=400:300" alt="Smart crop" loading="lazy">
               <code>?g=sm&rs=400:300</code>
               <span>Smart gravity</span>
             </div>
             <div class="effects-item">
-              <img src="images/photo.jpg?g=ce&rs=400:300" alt="Center crop" loading="lazy">
+              <img src="images/portrait.png?g=ce&rs=400:300" alt="Center crop" loading="lazy">
               <code>?g=ce&rs=400:300</code>
               <span>Center gravity</span>
             </div>
             <div class="effects-item">
-              <img src="images/photo.jpg?g=no&rs=400:300" alt="North crop" loading="lazy">
+              <img src="images/portrait.png?g=no&rs=400:300" alt="North crop" loading="lazy">
               <code>?g=no&rs=400:300</code>
               <span>North gravity</span>
             </div>

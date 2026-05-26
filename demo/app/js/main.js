@@ -82,22 +82,22 @@
 
   async function updateFileComparisons() {
     const comparisons = [
-      { 
-        name: 'photo', 
+      {
+        name: 'photo',
         origSize: 2346543, // bytes (2.3 MB)
-        avifUrl: PROXY_BASE + '/images/photo.jpg?rs=1200',
-        webpUrl: PROXY_BASE + '/images/photo.jpg?f=webp&rs=1200'
+        avifUrl: PROXY_BASE + '/images/photo.jpg',
+        webpUrl: PROXY_BASE + '/images/photo.jpg?f=webp'
       },
-      { 
-        name: 'portrait', 
+      {
+        name: 'portrait',
         origSize: 4178018, // bytes (4.1 MB)
-        avifUrl: PROXY_BASE + '/images/portrait.png?rs=800',
-        webpUrl: PROXY_BASE + '/images/portrait.png?f=webp&rs=800'
+        avifUrl: PROXY_BASE + '/images/portrait.png',
+        webpUrl: PROXY_BASE + '/images/portrait.png?f=webp'
       },
-      { 
-        name: 'gif', 
+      {
+        name: 'gif',
         origSize: 1406568, // bytes (1.4 MB)
-        webpUrl: PROXY_BASE + '/images/animated.gif?rs=600'
+        webpUrl: PROXY_BASE + '/images/animated.gif?f=webp'
       }
     ];
 
