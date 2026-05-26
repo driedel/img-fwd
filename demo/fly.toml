@@ -1,13 +1,17 @@
 app = "img-fwd-demo-static"
-primary_region = "iad"
+primary_region = "gru"
 
 [build]
   dockerfile = "Dockerfile"
 
-[[services]]
-  internal_port = 80
-  protocol = "tcp"
-  auto_stop_machines = true
+[http_service]
   auto_start_machines = true
+  auto_stop_machines = true
+  force_https = true
+  internal_port = 80
   min_machines_running = 0
-  # No [[services.ports]] = internal access only via .internal DNS
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "256mb"
