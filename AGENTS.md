@@ -81,6 +81,29 @@ The img-fwd proxy sits **in front** of the origin. All requests go through the p
 
 ### Deploy the demo
 
+#### Automated deployment (recommended)
+
+Use the deploy script to deploy both apps:
+
+```bash
+# Deploy both proxy and nginx
+./scripts/deploy.sh
+
+# Deploy only proxy (when fly.toml changes)
+./scripts/deploy.sh --proxy
+
+# Deploy only nginx (when demo/ files change)
+./scripts/deploy.sh --nginx
+```
+
+**Prerequisites:**
+- `flyctl` CLI installed (`brew install flyctl` on macOS)
+- Authenticated with Fly.io (`flyctl auth login`)
+
+**OpenCode skill:** When asked to deploy, use the `deploy` skill which provides step-by-step instructions and verification commands.
+
+#### Manual deployment
+
 1. **Generate demo images** (AI prompts listed below) and place in `demo/app/images/`
 2. **Internal nginx app (serves static files):**
    - `cd demo/`
