@@ -43,8 +43,11 @@
         return;
       }
 
-      // Fallback: HEAD request
-      fetch(url, { method: 'HEAD', mode: 'cors' })
+      // Fallback: HEAD request with cache-busting
+      const cacheBuster = url.includes('?') ? '&' : '?';
+      const fetchUrl = url + cacheBuster + '_t=' + Date.now();
+      
+      fetch(fetchUrl, { method: 'HEAD', mode: 'cors' })
         .then((res) => {
           const length = res.headers.get('content-length');
           resolve(length ? parseInt(length, 10) : null);
