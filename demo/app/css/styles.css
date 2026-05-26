@@ -51,14 +51,10 @@ body {
   border-bottom: 1px solid var(--border-color);
 }
 
-.ascii-logo {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.2;
-  color: var(--text-muted);
+.logo {
+  width: 120px;
+  height: 120px;
   margin-bottom: 20px;
-  overflow-x: auto;
-  white-space: pre;
 }
 
 .hero h1 {
