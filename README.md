@@ -1,10 +1,9 @@
-```
-                 _____________  ___________   ____________       _________ 
-                 ____  _/__   |/  /_  ____/   ___  ____/_ |     / /__  __ \
-                  __  / __  /|_/ /_  / __     __  /_   __ | /| / /__  / / /
-                 __/ /  _  /  / / / /_/ /     _  __/   __ |/ |/ / _  /_/ / 
-                 /___/  /_/  /_/  \____/      /_/      ____/|__/  /_____/  
-```
+<picture>
+  <source srcset="demo/app/images/logo-dark.svg" media="(prefers-color-scheme: dark)">
+  <source srcset="demo/app/images/logo-light.svg" media="(prefers-color-scheme: light)">
+  <img src="web/static/images/logo-light.svg" width="300" alt="IMG FWD">
+</picture>
+
 
 HTTP proxy in Go that sits in front of [imgproxy](https://imgproxy.net), enabling **transparent image optimization** — no changes to existing URLs required.
 
@@ -86,14 +85,13 @@ img-fwd automatically converts images to a modern format when no explicit `f=` p
 | Format | Auto-converts to | Reason |
 |---|---|---|
 | `.jpg`, `.jpeg`, `.png`, `.webp`, `.tiff`, `.bmp` | AVIF | Best compression for static images |
-| `.gif` | WebP | Preserves animation — imgproxy does not support animated AVIF |
-| `.svg`, `.ico`, `.avif` | — (passthrough) | Vector/already-modern formats, no conversion needed |
+| `.gif`, `.svg`, `.ico`, `.avif` | — (passthrough) | Served as-is without conversion |
 
 Setting `f=` explicitly always overrides the automatic behavior:
 ```
 /image.jpg          → converted to AVIF automatically
 /image.jpg?f=webp   → converted to WebP (explicit override)
-/animation.gif      → converted to animated WebP automatically
+/animation.gif      → served as-is (passthrough)
 /icon.svg           → served as-is
 ```
 

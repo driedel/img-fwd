@@ -64,14 +64,7 @@ func TestAutoFormat(t *testing.T) {
 		}
 	}
 
-	webp := []string{"/animation.gif", "/animation.GIF"}
-	for _, p := range webp {
-		if got := autoFormat(p); got != "webp" {
-			t.Errorf("autoFormat(%q) = %q, want \"webp\"", p, got)
-		}
-	}
-
-	none := []string{"/img.svg", "/img.ico", "/img.avif", "/noext", "/page.html"}
+	none := []string{"/img.svg", "/img.ico", "/img.avif", "/noext", "/page.html", "/animation.gif", "/animation.GIF"}
 	for _, p := range none {
 		if got := autoFormat(p); got != "" {
 			t.Errorf("autoFormat(%q) = %q, want \"\"", p, got)
@@ -82,7 +75,7 @@ func TestAutoFormat(t *testing.T) {
 // --- hasImageExtension ---
 
 func TestHasImageExtension(t *testing.T) {
-	images := []string{"/img.jpg", "/img.jpeg", "/img.png", "/img.webp", "/img.avif", "/img.tiff", "/img.bmp", "/img.svg", "/img.ico", "/img.gif"}
+	images := []string{"/img.jpg", "/img.jpeg", "/img.png", "/img.webp", "/img.avif", "/img.tiff", "/img.bmp", "/img.svg", "/img.ico"}
 	for _, p := range images {
 		if !hasImageExtension(p) {
 			t.Errorf("hasImageExtension(%q) = false, want true", p)
@@ -209,30 +202,27 @@ func TestHandlerAutoAvif(t *testing.T) {
 	}
 }
 
-func TestHandlerGifAutoConvertToWebp(t *testing.T) {
-	var capturedURI string
-	mock := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		capturedURI = r.RequestURI
+func TestHandlerGifPassesThrough(t *testing.T) {
+	var originHit bool
+	origin := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		originHit = true
 		w.WriteHeader(http.StatusOK)
 	}))
-	defer mock.Close()
+	defer origin.Close()
 
 	origImgproxy, origSource, origOrigins := imgproxyURL, sourceBaseURL, allowedOrigins
 	defer func() { imgproxyURL, sourceBaseURL, allowedOrigins = origImgproxy, origSource, origOrigins }()
 
-	imgproxyURL = mock.URL
-	sourceBaseURL = "http://origin"
+	imgproxyURL = "http://imgproxy-should-not-be-called"
+	sourceBaseURL = origin.URL
 	allowedOrigins = map[string]bool{}
 
-	req := httptest.NewRequest("GET", "/animation.gif", nil)
+	req := httptest.NewRequest("GET", "/animation.gif?rs=600", nil)
 	rr := httptest.NewRecorder()
 	handler(rr, req)
 
-	if !strings.Contains(capturedURI, "f:webp") {
-		t.Errorf("expected automatic f:webp for .gif, got %q", capturedURI)
-	}
-	if strings.Contains(capturedURI, "f:avif") {
-		t.Errorf("expected .gif NOT to use f:avif, got %q", capturedURI)
+	if !originHit {
+		t.Error("expected .gif to pass through to origin, not imgproxy")
 	}
 }
 

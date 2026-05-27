@@ -9,7 +9,7 @@
 <body>
   <header class="hero">
     <div class="container">
-      <img src="images/logo.svg" alt="img-fwd logo" class="logo">
+      <img src="images/logo-dark.svg" alt="img-fwd logo" class="logo">
       <p class="tagline">Transparent image optimization — zero changes to your URLs</p>
       <div class="badges">
         <span class="badge">Zero Cost</span>
@@ -137,15 +137,11 @@
               <img src="images/animated.gif" alt="Original animation" loading="lazy">
             </div>
             <div class="file-sizes">
-              <div class="file-size-row">
-                <span class="file-label">Original GIF</span>
+              <div class="file-size-row highlight">
+                <span class="file-label">Original GIF (passthrough)</span>
                 <span class="file-value" id="size-gif-orig">1.4 MB</span>
               </div>
-              <div class="file-size-row highlight">
-                <span class="file-label">WebP <code>?rs=600</code></span>
-                <span class="file-value" id="size-gif-webp">Loading...</span>
-              </div>
-              <div class="file-savings" id="savings-gif"></div>
+              <div class="file-savings" id="savings-gif">GIF is served as-is — no conversion</div>
             </div>
           </div>
         </div>
@@ -254,9 +250,9 @@
             <span class="format-note">Force WebP format</span>
           </div>
           <div class="format-item">
-            <h4>GIF → WebP <code>?rs=400</code></h4>
-            <img src="images/animated.gif?rs=400" alt="GIF to WebP" loading="lazy">
-            <span class="format-note">Animated GIF converted to animated WebP</span>
+            <h4>GIF Pass-through</h4>
+            <img src="images/animated.gif" alt="GIF passthrough" loading="lazy">
+            <span class="format-note">Animated GIF served as-is</span>
           </div>
           <div class="format-item">
             <h4>SVG Pass-through <code>?rs=200</code></h4>

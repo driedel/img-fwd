@@ -94,10 +94,9 @@
         avifUrl: PROXY_BASE + '/images/portrait.jpg?rs=800',
         webpUrl: PROXY_BASE + '/images/portrait.jpg?f=webp&rs=800'
       },
-      { 
-        name: 'gif', 
-        origSize: 1406568, // bytes (1.4 MB)
-        webpUrl: PROXY_BASE + '/images/animated.gif?rs=600'
+      {
+        name: 'gif',
+        origSize: 1406568 // bytes (1.4 MB)
       }
     ];
 

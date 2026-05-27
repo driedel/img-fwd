@@ -56,8 +56,7 @@ When no `f=` param is provided:
 | Extension | Auto-format |
 |---|---|
 | `.jpg/.jpeg/.png/.webp/.tiff/.bmp` | AVIF |
-| `.gif` | WebP (preserves animation) |
-| `.svg/.ico/.avif` | Passthrough (no conversion) |
+| `.gif/.svg/.ico/.avif` | Passthrough (no conversion) |
 
 ## Env var behavior
 

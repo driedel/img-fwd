@@ -52,8 +52,8 @@ body {
 }
 
 .logo {
-  width: 120px;
-  height: 120px;
+  max-width: 550px;
+  width: 80%;
   margin-bottom: 20px;
 }
 
