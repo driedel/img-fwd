@@ -28,6 +28,26 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 - **Docker build context:** repo root (Dockerfile copies from `app/`).
 - **CI:** Tests run on every push to `main`. Docker image `driedel/img-fwd` is built and pushed **only on version tags** (`v*`). Multi-platform: `linux/amd64,linux/arm64`.
 
+### Fly.io (production)
+
+Two apps on Fly.io, both in region `gru` (São Paulo):
+
+| App | What it serves | When to redeploy |
+|---|---|---|
+| `img-fwd` | Go proxy | After CI pushes a new Docker image (post version tag) |
+| `img-fwd-demo-static` | Demo site (nginx) | When any file in `demo/` changes |
+
+**Always use the deploy script** — it handles both apps, checks auth, and verifies status:
+
+```bash
+./scripts/deploy.sh           # deploy both proxy and nginx
+./scripts/deploy.sh --proxy   # proxy only (after new Docker image from CI)
+./scripts/deploy.sh --nginx   # nginx only (after demo/ file changes)
+```
+
+- The proxy pulls `driedel/img-fwd:latest` from Docker Hub — no local build needed.
+- `flyctl auth login` required if not authenticated.
+
 ## Key runtime behavior
 
 - **Port defaults differ:** `8888` in `docker-compose.yml` vs `8000` in Go fallback (`PORT` env var).
