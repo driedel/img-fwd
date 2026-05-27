@@ -27,4 +27,4 @@ primary_region = "gru"
 [[vm]]
   cpu_kind = "shared"
   cpus = 1
-  memory = "1gb"  # imgproxy needs more memory for image processing
+  memory = "2gb"  # imgproxy needs more memory for image processing
