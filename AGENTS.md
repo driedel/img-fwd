@@ -1,5 +1,7 @@
 # img-fwd — Agent Notes
 
+> **Claude users:** See `CLAUDE.md` for identical instructions.
+
 Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at repo root.
 
 ## Development
