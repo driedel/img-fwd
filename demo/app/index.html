@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>img-fwd — Transparent Image Optimization</title>
+  <title>IMG FWD — Transparent Image Optimization</title>
+  <link rel="icon" href="images/icon-light.svg" media="(prefers-color-scheme: light)"/>
+	<link rel="icon" href="images/icon-dark.svg" media="(prefers-color-scheme: dark)"/>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header class="hero">
     <div class="container">
-      <img src="images/logo.svg" alt="img-fwd logo" class="logo">
+      <img src="images/logo-dark.svg" alt="img-fwd logo" class="logo">
       <p class="tagline">Transparent image optimization — zero changes to your URLs</p>
       <div class="badges">
         <span class="badge">Zero Cost</span>
@@ -108,7 +110,7 @@
               <span class="file-tag">4.1 MB original</span>
             </div>
             <div class="file-preview">
-              <img src="images/portrait.png" alt="Original portrait" loading="lazy">
+              <img src="images/portrait.jpg" alt="Original portrait" loading="lazy">
             </div>
             <div class="file-sizes">
               <div class="file-size-row">
@@ -137,15 +139,11 @@
               <img src="images/animated.gif" alt="Original animation" loading="lazy">
             </div>
             <div class="file-sizes">
-              <div class="file-size-row">
-                <span class="file-label">Original GIF</span>
+              <div class="file-size-row highlight">
+                <span class="file-label">Original GIF (passthrough)</span>
                 <span class="file-value" id="size-gif-orig">1.4 MB</span>
               </div>
-              <div class="file-size-row highlight">
-                <span class="file-label">WebP <code>?f=webp</code></span>
-                <span class="file-value" id="size-gif-webp">Loading...</span>
-              </div>
-              <div class="file-savings" id="savings-gif"></div>
+              <div class="file-savings" id="savings-gif">GIF is served as-is — no conversion</div>
             </div>
           </div>
         </div>
@@ -197,37 +195,37 @@
         </div>
 
         <div class="resize-category">
-          <h3>portrait.png — Original: 4.1 MB</h3>
+          <h3>portrait.jpg — Original: 4.1 MB</h3>
           <div class="resize-grid">
             <div class="resize-item">
-              <img src="images/portrait.png?rs=400" alt="400px" loading="lazy" onload="measureSize(this)">
+              <img src="images/portrait.jpg?rs=400" alt="400px" loading="lazy" onload="measureSize(this)">
               <div class="resize-info">
                 <code>?rs=400</code>
-                <span class="resize-size" data-src="images/portrait.png?rs=400">—</span>
+                <span class="resize-size" data-src="images/portrait.jpg?rs=400">—</span>
                 <span class="resize-dim">400px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/portrait.png?rs=800" alt="800px" loading="lazy" onload="measureSize(this)">
+              <img src="images/portrait.jpg?rs=800" alt="800px" loading="lazy" onload="measureSize(this)">
               <div class="resize-info">
                 <code>?rs=800</code>
-                <span class="resize-size" data-src="images/portrait.png?rs=800">—</span>
+                <span class="resize-size" data-src="images/portrait.jpg?rs=800">—</span>
                 <span class="resize-dim">800px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/portrait.png?rs=1200" alt="1200px" loading="lazy" onload="measureSize(this)">
+              <img src="images/portrait.jpg?rs=1200" alt="1200px" loading="lazy" onload="measureSize(this)">
               <div class="resize-info">
                 <code>?rs=1200</code>
-                <span class="resize-size" data-src="images/portrait.png?rs=1200">—</span>
+                <span class="resize-size" data-src="images/portrait.jpg?rs=1200">—</span>
                 <span class="resize-dim">1200px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/portrait.png?rs=1920" alt="1920px" loading="lazy" onload="measureSize(this)">
+              <img src="images/portrait.jpg?rs=1920" alt="1920px" loading="lazy" onload="measureSize(this)">
               <div class="resize-info">
                 <code>?rs=1920</code>
-                <span class="resize-size" data-src="images/portrait.png?rs=1920">—</span>
+                <span class="resize-size" data-src="images/portrait.jpg?rs=1920">—</span>
                 <span class="resize-dim">1920px wide (full)</span>
               </div>
             </div>
@@ -254,9 +252,9 @@
             <span class="format-note">Force WebP format</span>
           </div>
           <div class="format-item">
-            <h4>GIF → WebP <code>?rs=400</code></h4>
-            <img src="images/animated.gif?rs=400" alt="GIF to WebP" loading="lazy">
-            <span class="format-note">Animated GIF converted to animated WebP</span>
+            <h4>GIF Pass-through</h4>
+            <img src="images/animated.gif" alt="GIF passthrough" loading="lazy">
+            <span class="format-note">Animated GIF served as-is</span>
           </div>
           <div class="format-item">
             <h4>SVG Pass-through <code>?rs=200</code></h4>
@@ -314,28 +312,6 @@
             </div>
           </div>
         </div>
-
-        <div class="effects-category">
-          <h3>Smart Crop</h3>
-          <div class="effects-grid">
-            <div class="effects-item">
-              <img src="images/portrait.png?g=sm&rs=400:300" alt="Smart crop" loading="lazy">
-              <code>?g=sm&rs=400:300</code>
-              <span>Smart gravity</span>
-            </div>
-            <div class="effects-item">
-              <img src="images/portrait.png?g=ce&rs=400:300" alt="Center crop" loading="lazy">
-              <code>?g=ce&rs=400:300</code>
-              <span>Center gravity</span>
-            </div>
-            <div class="effects-item">
-              <img src="images/portrait.png?g=no&rs=400:300" alt="North crop" loading="lazy">
-              <code>?g=no&rs=400:300</code>
-              <span>North gravity</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- Technical Reference -->

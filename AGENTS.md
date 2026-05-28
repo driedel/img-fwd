@@ -1,5 +1,7 @@
 # img-fwd — Agent Notes
 
+> **Claude users:** See `CLAUDE.md` for identical instructions.
+
 Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at repo root.
 
 ## Development
@@ -34,7 +36,7 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 - **Routing logic:**
   - Non-image paths (`.html`, `.js`, etc.) go directly to origin, even with `?f=avif&rs=600`.
   - Image paths go through imgproxy **only when transformation params are present**; otherwise they pass through to origin.
-- **Auto-format:** `.jpg/.png/.webp/.tiff/.bmp` → AVIF; `.gif` → animated WebP; `.svg/.ico/.avif` passthrough. Explicit `f=` overrides auto-format.
+- **Auto-format:** `.jpg/.png/.webp/.tiff/.bmp` → AVIF; `.gif/.svg/.ico/.avif` passthrough. Explicit `f=` overrides auto-format.
 - **Query param forwarding:** non-imgproxy params (`v=2`, `cache=1`, etc.) are forwarded to the origin URL, not imgproxy.
 - **Health:** `GET /healthz` → `200 ok`.
 

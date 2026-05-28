@@ -44,16 +44,10 @@ func isAllowed(host string) bool {
 }
 
 // avifConvertibleExtensions lists raster formats that imgproxy can encode as AVIF.
-// SVG, ICO and GIF are excluded: SVG/ICO are vector/icon formats; GIF is auto-converted to WebP instead.
+// SVG, ICO and GIF are excluded: SVG/ICO are vector/icon formats; GIF passes through unchanged.
 var avifConvertibleExtensions = map[string]bool{
 	".jpg": true, ".jpeg": true, ".png": true,
 	".webp": true, ".tiff": true, ".bmp": true,
-}
-
-// webpAutoExtensions lists formats that are auto-converted to WebP instead of AVIF.
-// GIF uses WebP to preserve animation support, since animated AVIF is not supported by imgproxy.
-var webpAutoExtensions = map[string]bool{
-	".gif": true,
 }
 
 func autoFormat(path string) string {
@@ -64,9 +58,6 @@ func autoFormat(path string) string {
 	ext := strings.ToLower(path[dot:])
 	if avifConvertibleExtensions[ext] {
 		return "avif"
-	}
-	if webpAutoExtensions[ext] {
-		return "webp"
 	}
 	return ""
 }
@@ -121,7 +112,7 @@ var imgproxyParams = map[string]bool{
 }
 
 var imageExtensions = map[string]bool{
-	".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
+	".jpg": true, ".jpeg": true, ".png": true,
 	".webp": true, ".avif": true, ".tiff": true, ".bmp": true,
 	".svg": true, ".ico": true,
 }
