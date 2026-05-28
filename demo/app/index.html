@@ -81,7 +81,6 @@
           <div class="file-card">
             <div class="file-card-header">
               <h3>Coastal Landscape</h3>
-              <span class="file-tag">4.7 MB original</span>
             </div>
             <div class="file-preview">
               <img src="images/photo.jpg" alt="Original photo" loading="lazy">
@@ -107,7 +106,6 @@
           <div class="file-card">
             <div class="file-card-header">
               <h3>Portrait</h3>
-              <span class="file-tag">3.3 MB original</span>
             </div>
             <div class="file-preview">
               <img src="images/portrait.jpg" alt="Original portrait" loading="lazy">
@@ -133,7 +131,6 @@
           <div class="file-card">
             <div class="file-card-header">
               <h3>Animation</h3>
-              <span class="file-tag">1.3 MB original</span>
             </div>
             <div class="file-preview">
               <img src="images/animated.gif" alt="Original animation" loading="lazy">
@@ -150,84 +147,87 @@
       </div>
     </section>
 
-    <!-- Resize Gallery -->
-    <section class="section resize-gallery" id="resize-gallery">
+    <!-- Interactive Playground -->
+    <section class="section playground" id="playground">
       <div class="container">
         <h2>Resize & Compression</h2>
-        <p class="section-desc">Add <code>?rs=width</code> to any image. The proxy returns the perfect size.</p>
+        <p class="section-desc">Choose an image, width, and effects — see the result and savings in real-time.</p>
 
-        <div class="resize-category">
-          <h3>photo.jpg — Original: 4.7 MB</h3>
-          <div class="resize-grid">
-            <div class="resize-item">
-              <img src="images/photo.jpg?rs=400" alt="400px" loading="lazy">
-              <div class="resize-info">
-                <code>?rs=400</code>
-                <span class="resize-size">12.6 KB</span>
-                <span class="resize-dim">400px wide</span>
+        <div class="playground-card">
+          <div class="playground-header">
+
+            <div class="playground-header-left">
+              <div class="control-group">
+                <span class="control-label">Image</span>
+                <div class="control-pills" id="pills-image">
+                  <button class="pill active" data-value="photo.jpg">photo.jpg</button>
+                  <button class="pill" data-value="portrait.jpg">portrait.jpg</button>
+                </div>
+              </div>
+              <div class="info-panel">
+                <div class="info-url-row">
+                  <span class="info-url-label">URL</span>
+                  <code class="info-url-code" id="playground-url">images/photo.jpg?rs=800</code>
+                </div>
+                <div class="info-stats-row">
+                  <div class="info-stat-item">
+                    <span class="info-stat-label">Original</span>
+                    <span class="info-stat-val danger" id="stat-orig">4.7 MB</span>
+                  </div>
+                  <span class="info-stat-sep">→</span>
+                  <div class="info-stat-item">
+                    <span class="info-stat-label">Optimized</span>
+                    <span class="info-stat-val success" id="stat-opt">41.8 KB</span>
+                  </div>
+                  <span class="info-stat-sep">→</span>
+                  <div class="info-stat-item">
+                    <span class="info-stat-label">Reduction</span>
+                    <span class="info-stat-val accent" id="stat-savings">99%</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="resize-item">
-              <img src="images/photo.jpg?rs=800" alt="800px" loading="lazy">
-              <div class="resize-info">
-                <code>?rs=800</code>
-                <span class="resize-size">41.8 KB</span>
-                <span class="resize-dim">800px wide</span>
+
+            <div class="playground-header-right">
+              <div class="control-group">
+                <span class="control-label">Width</span>
+                <div class="control-pills" id="pills-size">
+                  <button class="pill" data-value="400">400px</button>
+                  <button class="pill active" data-value="800">800px</button>
+                  <button class="pill" data-value="1200">1200px</button>
+                </div>
+              </div>
+              <div class="control-group">
+                <span class="control-label">Quality</span>
+                <div class="control-pills" id="pills-quality">
+                  <button class="pill active" data-value="">auto</button>
+                  <button class="pill" data-value="90">q=90</button>
+                  <button class="pill" data-value="75">q=75</button>
+                  <button class="pill" data-value="50">q=50</button>
+                </div>
+              </div>
+              <div class="control-group">
+                <span class="control-label">Blur</span>
+                <div class="control-pills" id="pills-blur">
+                  <button class="pill active" data-value="">none</button>
+                  <button class="pill" data-value="2">blur=2</button>
+                  <button class="pill" data-value="5">blur=5</button>
+                  <button class="pill" data-value="10">blur=10</button>
+                </div>
               </div>
             </div>
-            <div class="resize-item">
-              <img src="images/photo.jpg?rs=1200" alt="1200px" loading="lazy">
-              <div class="resize-info">
-                <code>?rs=1200</code>
-                <span class="resize-size">90.8 KB</span>
-                <span class="resize-dim">1200px wide</span>
-              </div>
-            </div>
-            <div class="resize-item">
-              <img src="images/photo.jpg?rs=1920" alt="1920px" loading="lazy">
-              <div class="resize-info">
-                <code>?rs=1920</code>
-                <span class="resize-size">216.4 KB</span>
-                <span class="resize-dim">1920px wide (full)</span>
-              </div>
-            </div>
+
           </div>
-        </div>
 
-        <div class="resize-category">
-          <h3>portrait.jpg — Original: 3.3 MB</h3>
-          <div class="resize-grid">
-            <div class="resize-item">
-              <img src="images/portrait.jpg?rs=400" alt="400px" loading="lazy">
-              <div class="resize-info">
-                <code>?rs=400</code>
-                <span class="resize-size">5.3 KB</span>
-                <span class="resize-dim">400px wide</span>
-              </div>
+          <div class="playground-preview">
+            <div class="preview-frame">
+              <img id="playground-img" src="images/photo.jpg?rs=800" alt="Playground preview">
             </div>
-            <div class="resize-item">
-              <img src="images/portrait.jpg?rs=800" alt="800px" loading="lazy">
-              <div class="resize-info">
-                <code>?rs=800</code>
-                <span class="resize-size">12.7 KB</span>
-                <span class="resize-dim">800px wide</span>
+            <div class="size-indicator">
+              <div class="size-bar">
+                <div class="size-bar-fill" id="size-bar-fill" style="width: 42%"></div>
               </div>
-            </div>
-            <div class="resize-item">
-              <img src="images/portrait.jpg?rs=1200" alt="1200px" loading="lazy">
-              <div class="resize-info">
-                <code>?rs=1200</code>
-                <span class="resize-size">21.6 KB</span>
-                <span class="resize-dim">1200px wide</span>
-              </div>
-            </div>
-            <div class="resize-item">
-              <img src="images/portrait.jpg?rs=1920" alt="1920px" loading="lazy">
-              <div class="resize-info">
-                <code>?rs=1920</code>
-                <span class="resize-size">44.3 KB</span>
-                <span class="resize-dim">1920px wide (full)</span>
-              </div>
+              <span class="size-bar-label" id="size-bar-label">800px wide · 42% of 1920px</span>
             </div>
           </div>
         </div>
@@ -265,54 +265,6 @@
       </div>
     </section>
 
-    <!-- Quality & Effects -->
-    <section class="section effects-gallery" id="effects-gallery">
-      <div class="container">
-        <h2>Quality & Effects</h2>
-        <p class="section-desc">Fine-tune output with quality, blur, and crop parameters.</p>
-
-        <div class="effects-category">
-          <h3>Quality Control</h3>
-          <div class="effects-grid">
-            <div class="effects-item">
-              <img src="images/photo.jpg?q=90&rs=600" alt="Quality 90" loading="lazy">
-              <code>?q=90&rs=600</code>
-              <span>Near lossless</span>
-            </div>
-            <div class="effects-item">
-              <img src="images/photo.jpg?q=75&rs=600" alt="Quality 75" loading="lazy">
-              <code>?q=75&rs=600</code>
-              <span>Balanced (recommended)</span>
-            </div>
-            <div class="effects-item">
-              <img src="images/photo.jpg?q=50&rs=600" alt="Quality 50" loading="lazy">
-              <code>?q=50&rs=600</code>
-              <span>Maximum compression</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="effects-category">
-          <h3>Blur Effects</h3>
-          <div class="effects-grid">
-            <div class="effects-item">
-              <img src="images/photo.jpg?blur=2&rs=600" alt="Blur 2" loading="lazy">
-              <code>?blur=2&rs=600</code>
-              <span>Subtle</span>
-            </div>
-            <div class="effects-item">
-              <img src="images/photo.jpg?blur=5&rs=600" alt="Blur 5" loading="lazy">
-              <code>?blur=5&rs=600</code>
-              <span>Medium</span>
-            </div>
-            <div class="effects-item">
-              <img src="images/photo.jpg?blur=10&rs=600" alt="Blur 10" loading="lazy">
-              <code>?blur=10&rs=600</code>
-              <span>Heavy</span>
-            </div>
-          </div>
-        </div>
-    </section>
 
     <!-- Technical Reference -->
     <section class="section reference" id="reference">

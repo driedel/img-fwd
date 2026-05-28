@@ -1,0 +1,8 @@
+services:
+  img-fwd-demo:
+    build: .
+    ports:
+      - "8089:80"
+    volumes:
+      - ./app/:/usr/share/nginx/html/
+    restart: unless-stopped
