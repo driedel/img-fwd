@@ -74,14 +74,14 @@
     <section class="section file-comparison" id="file-comparison">
       <div class="container">
         <h2>Real File Size Comparison</h2>
-        <p class="section-desc">Same image URLs. Just add <code>?rs=width</code> to optimize.</p>
+        <p class="section-desc">Same image, same dimensions. Only the format changes.</p>
         
         <div class="file-comparison-grid">
           <!-- Photo -->
           <div class="file-card">
             <div class="file-card-header">
               <h3>Coastal Landscape</h3>
-              <span class="file-tag">2.3 MB original</span>
+              <span class="file-tag">4.7 MB original</span>
             </div>
             <div class="file-preview">
               <img src="images/photo.jpg" alt="Original photo" loading="lazy">
@@ -89,17 +89,17 @@
             <div class="file-sizes">
               <div class="file-size-row">
                 <span class="file-label">Original</span>
-                <span class="file-value" id="size-photo-orig">2.3 MB</span>
+                <span class="file-value">4.7 MB</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">AVIF <code>?rs=1200</code></span>
-                <span class="file-value" id="size-photo-avif">Loading...</span>
+                <span class="file-label">AVIF <code>(auto)</code></span>
+                <span class="file-value">2.7 MB</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">WebP <code>?f=webp&rs=1200</code></span>
-                <span class="file-value" id="size-photo-webp">Loading...</span>
+                <span class="file-label">WebP <code>?f=webp</code></span>
+                <span class="file-value">2.6 MB</span>
               </div>
-              <div class="file-savings" id="savings-photo"></div>
+              <div class="file-savings">💾 45% smaller than original (2.1 MB saved)</div>
             </div>
           </div>
 
@@ -107,7 +107,7 @@
           <div class="file-card">
             <div class="file-card-header">
               <h3>Portrait</h3>
-              <span class="file-tag">4.1 MB original</span>
+              <span class="file-tag">3.3 MB original</span>
             </div>
             <div class="file-preview">
               <img src="images/portrait.jpg" alt="Original portrait" loading="lazy">
@@ -115,17 +115,17 @@
             <div class="file-sizes">
               <div class="file-size-row">
                 <span class="file-label">Original</span>
-                <span class="file-value" id="size-portrait-orig">4.1 MB</span>
+                <span class="file-value">3.3 MB</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">AVIF <code>?rs=800</code></span>
-                <span class="file-value" id="size-portrait-avif">Loading...</span>
+                <span class="file-label">AVIF <code>(auto)</code></span>
+                <span class="file-value">263.8 KB</span>
               </div>
               <div class="file-size-row highlight">
-                <span class="file-label">WebP <code>?f=webp&rs=800</code></span>
-                <span class="file-value" id="size-portrait-webp">Loading...</span>
+                <span class="file-label">WebP <code>?f=webp</code></span>
+                <span class="file-value">268.5 KB</span>
               </div>
-              <div class="file-savings" id="savings-portrait"></div>
+              <div class="file-savings">💾 92% smaller than original (3.0 MB saved)</div>
             </div>
           </div>
 
@@ -133,7 +133,7 @@
           <div class="file-card">
             <div class="file-card-header">
               <h3>Animation</h3>
-              <span class="file-tag">1.4 MB original</span>
+              <span class="file-tag">1.3 MB original</span>
             </div>
             <div class="file-preview">
               <img src="images/animated.gif" alt="Original animation" loading="lazy">
@@ -141,7 +141,7 @@
             <div class="file-sizes">
               <div class="file-size-row highlight">
                 <span class="file-label">Original GIF (passthrough)</span>
-                <span class="file-value" id="size-gif-orig">1.4 MB</span>
+                <span class="file-value">1.3 MB</span>
               </div>
               <div class="file-savings" id="savings-gif">GIF is served as-is — no conversion</div>
             </div>
@@ -157,37 +157,37 @@
         <p class="section-desc">Add <code>?rs=width</code> to any image. The proxy returns the perfect size.</p>
 
         <div class="resize-category">
-          <h3>photo.jpg — Original: 2.3 MB</h3>
+          <h3>photo.jpg — Original: 4.7 MB</h3>
           <div class="resize-grid">
             <div class="resize-item">
-              <img src="images/photo.jpg?rs=400" alt="400px" loading="lazy" onload="measureSize(this)">
+              <img src="images/photo.jpg?rs=400" alt="400px" loading="lazy">
               <div class="resize-info">
                 <code>?rs=400</code>
-                <span class="resize-size" data-src="images/photo.jpg?rs=400">—</span>
+                <span class="resize-size">12.6 KB</span>
                 <span class="resize-dim">400px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/photo.jpg?rs=800" alt="800px" loading="lazy" onload="measureSize(this)">
+              <img src="images/photo.jpg?rs=800" alt="800px" loading="lazy">
               <div class="resize-info">
                 <code>?rs=800</code>
-                <span class="resize-size" data-src="images/photo.jpg?rs=800">—</span>
+                <span class="resize-size">41.8 KB</span>
                 <span class="resize-dim">800px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/photo.jpg?rs=1200" alt="1200px" loading="lazy" onload="measureSize(this)">
+              <img src="images/photo.jpg?rs=1200" alt="1200px" loading="lazy">
               <div class="resize-info">
                 <code>?rs=1200</code>
-                <span class="resize-size" data-src="images/photo.jpg?rs=1200">—</span>
+                <span class="resize-size">90.8 KB</span>
                 <span class="resize-dim">1200px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/photo.jpg?rs=1920" alt="1920px" loading="lazy" onload="measureSize(this)">
+              <img src="images/photo.jpg?rs=1920" alt="1920px" loading="lazy">
               <div class="resize-info">
                 <code>?rs=1920</code>
-                <span class="resize-size" data-src="images/photo.jpg?rs=1920">—</span>
+                <span class="resize-size">216.4 KB</span>
                 <span class="resize-dim">1920px wide (full)</span>
               </div>
             </div>
@@ -195,37 +195,37 @@
         </div>
 
         <div class="resize-category">
-          <h3>portrait.jpg — Original: 4.1 MB</h3>
+          <h3>portrait.jpg — Original: 3.3 MB</h3>
           <div class="resize-grid">
             <div class="resize-item">
-              <img src="images/portrait.jpg?rs=400" alt="400px" loading="lazy" onload="measureSize(this)">
+              <img src="images/portrait.jpg?rs=400" alt="400px" loading="lazy">
               <div class="resize-info">
                 <code>?rs=400</code>
-                <span class="resize-size" data-src="images/portrait.jpg?rs=400">—</span>
+                <span class="resize-size">5.3 KB</span>
                 <span class="resize-dim">400px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/portrait.jpg?rs=800" alt="800px" loading="lazy" onload="measureSize(this)">
+              <img src="images/portrait.jpg?rs=800" alt="800px" loading="lazy">
               <div class="resize-info">
                 <code>?rs=800</code>
-                <span class="resize-size" data-src="images/portrait.jpg?rs=800">—</span>
+                <span class="resize-size">12.7 KB</span>
                 <span class="resize-dim">800px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/portrait.jpg?rs=1200" alt="1200px" loading="lazy" onload="measureSize(this)">
+              <img src="images/portrait.jpg?rs=1200" alt="1200px" loading="lazy">
               <div class="resize-info">
                 <code>?rs=1200</code>
-                <span class="resize-size" data-src="images/portrait.jpg?rs=1200">—</span>
+                <span class="resize-size">21.6 KB</span>
                 <span class="resize-dim">1200px wide</span>
               </div>
             </div>
             <div class="resize-item">
-              <img src="images/portrait.jpg?rs=1920" alt="1920px" loading="lazy" onload="measureSize(this)">
+              <img src="images/portrait.jpg?rs=1920" alt="1920px" loading="lazy">
               <div class="resize-info">
                 <code>?rs=1920</code>
-                <span class="resize-size" data-src="images/portrait.jpg?rs=1920">—</span>
+                <span class="resize-size">44.3 KB</span>
                 <span class="resize-dim">1920px wide (full)</span>
               </div>
             </div>
