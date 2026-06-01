@@ -61,6 +61,16 @@ docker run -d \
   driedel/img-fwd:latest
 ```
 
+### Demo
+
+Run the full demo stack (nginx + proxy) locally:
+
+```bash
+docker compose -f demo/docker-compose.demo.yml up --build -d
+```
+
+Open [http://localhost:8888](http://localhost:8888).
+
 ### Local development
 
 Used when img-fwd needs to reach services running inside another project's Docker network. Set the required variables in `.env`:

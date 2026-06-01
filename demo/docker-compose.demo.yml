@@ -1,0 +1,24 @@
+services:
+  demo-nginx:
+    build: .
+    volumes:
+      - ./app:/usr/share/nginx/html
+    networks:
+      - img-fwd-net
+    restart: unless-stopped
+
+  img-fwd:
+    build: ..
+    ports:
+      - "8888:8888"
+    environment:
+      - PORT=8888
+      - SOURCE_BASE_URL=http://demo-nginx:80
+    depends_on:
+      - demo-nginx
+    networks:
+      - img-fwd-net
+    restart: unless-stopped
+
+networks:
+  img-fwd-net:
