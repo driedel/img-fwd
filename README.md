@@ -39,10 +39,67 @@ https://cdn.examplesite.com/marketing/image.png?f=avif&rs=600
 | `ALLOWED_ORIGINS` | No* | Comma-separated list of allowed origin domains | `cdn.examplesite.com,assets.another.com` |
 | `PORT` | No | Port the proxy listens on (default: `8888`) | `9010` |
 | `SOURCE_BASE_URL` | No | Overrides automatic origin URL reconstruction | `http://internal-service:5000` |
+| `SIGNING_KEY` | No | Enables dual-source mode: signed requests are routed to a private S3 bucket | random 32+ char secret |
+| `S3_ENDPOINT` | No** | S3/MinIO endpoint (host:port) for the private bucket | `minio:9000`, `s3.amazonaws.com` |
+| `S3_BUCKET` | No** | Private bucket name | `my-private-assets` |
+| `S3_ACCESS_KEY` | No** | S3 access key | `AKIA...` |
+| `S3_SECRET_KEY` | No** | S3 secret key | `...` |
+| `S3_USE_SSL` | No | Use HTTPS for S3 (default: `false`) | `true` |
+| `S3_REGION` | No | S3 region (default: `us-east-1`; MinIO accepts any value) | `sa-east-1` |
 | `IMGPROXY_LOG_LEVEL` | No | Log level for the internal imgproxy (default: `warn`) | `info` |
 | `EXTERNAL_NETWORK` | No | External Docker network to join (local dev only) | `my-project_default` |
 
 > *If `ALLOWED_ORIGINS` is empty, all origins are accepted. **Not recommended in production.**
+>
+> **Required when `SIGNING_KEY` is set — the proxy refuses to start otherwise.
+
+---
+
+## Dual-source mode (public + private buckets)
+
+When `SIGNING_KEY` and the `S3_*` variables are set, img-fwd runs in **dual-source mode**: a single instance serves a public origin *and* a private S3/MinIO bucket, routed by request signature:
+
+```
+Request with exp + sig:
+    valid, unexpired signature → PRIVATE bucket (S3 presigned GetObject)
+    invalid or expired         → 403 (never falls back to public)
+Request without exp + sig:
+    → PUBLIC source only (SOURCE_BASE_URL / Host header), never the private bucket
+```
+
+The private bucket never needs public access: img-fwd generates a **presigned S3 URL** (AWS Signature V4, 15 min TTL) and hands it to imgproxy — or fetches the object itself for passthrough requests. Responses from the private route always carry `Cache-Control: private, max-age=900`, since signed URLs expire.
+
+### Signing scheme
+
+The backend application signs image URLs with the same `SIGNING_KEY`:
+
+```
+sig = hex( HMAC-SHA256(SIGNING_KEY, "<path>\n<exp>") )
+```
+
+- `<path>` — the URL path only (e.g. `/photos/cat.jpg`); query params are **not** signed
+- `<exp>` — Unix timestamp when the URL expires (a 15 min TTL is a good default)
+
+Example in Go:
+
+```go
+func SignURL(path string, ttl time.Duration) string {
+    exp := time.Now().Add(ttl).Unix()
+    mac := hmac.New(sha256.New, []byte(signingKey))
+    fmt.Fprintf(mac, "%s\n%d", path, exp)
+    return fmt.Sprintf("%s?exp=%d&sig=%x", path, exp, mac.Sum(nil))
+}
+// → /photos/cat.jpg?exp=1750000900&sig=3f2a...
+```
+
+Transformation params compose freely with signed URLs (they are not part of the signature):
+
+```
+/photos/cat.jpg?exp=1750000900&sig=3f2a...&rs=800      → AVIF, resized, from the private bucket
+/photos/cat.jpg?rs=800                                 → public source (no signature)
+```
+
+When `SIGNING_KEY` is **not** set, the proxy behaves exactly as before (open, public origin) — `exp`/`sig` params are simply ignored. Video/audio files are not served by img-fwd in either mode.
 
 ---
 

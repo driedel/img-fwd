@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 )
 
 func getEnv(key, fallback string) string {
@@ -23,7 +24,45 @@ var (
 	port           = getEnv("PORT", "8000")
 	allowedOrigins = parseAllowedOrigins(os.Getenv("ALLOWED_ORIGINS"))
 	sourceBaseURL  = getEnv("SOURCE_BASE_URL", "")
+	signingKey     = os.Getenv("SIGNING_KEY")
+	s3             = s3Config{
+		endpoint:  os.Getenv("S3_ENDPOINT"),
+		bucket:    os.Getenv("S3_BUCKET"),
+		accessKey: os.Getenv("S3_ACCESS_KEY"),
+		secretKey: os.Getenv("S3_SECRET_KEY"),
+		region:    getEnv("S3_REGION", "us-east-1"),
+		useSSL:    getEnv("S3_USE_SSL", "false") == "true",
+	}
 )
+
+// presignTTL is how long the S3 presigned URLs handed to imgproxy stay valid.
+const presignTTL = 15 * time.Minute
+
+// validateConfig enforces that SIGNING_KEY (private routing) only runs with a
+// fully configured S3 source — a misconfigured private route must fail loudly
+// at startup, never silently fall back to the public source.
+func validateConfig() error {
+	if signingKey == "" {
+		return nil
+	}
+	missing := []string{}
+	if s3.endpoint == "" {
+		missing = append(missing, "S3_ENDPOINT")
+	}
+	if s3.bucket == "" {
+		missing = append(missing, "S3_BUCKET")
+	}
+	if s3.accessKey == "" {
+		missing = append(missing, "S3_ACCESS_KEY")
+	}
+	if s3.secretKey == "" {
+		missing = append(missing, "S3_SECRET_KEY")
+	}
+	if len(missing) > 0 {
+		return fmt.Errorf("SIGNING_KEY requires private S3 source; missing: %s", strings.Join(missing, ", "))
+	}
+	return nil
+}
 
 func parseAllowedOrigins(s string) map[string]bool {
 	m := map[string]bool{}
@@ -111,6 +150,12 @@ var imgproxyParams = map[string]bool{
 	"f": true, "rs": true, "g": true, "q": true, "blur": true,
 }
 
+// signingParams are consumed by the proxy itself and must never be forwarded
+// to the origin or embedded in the imgproxy URL.
+var signingParams = map[string]bool{
+	"exp": true, "sig": true,
+}
+
 var imageExtensions = map[string]bool{
 	".jpg": true, ".jpeg": true, ".png": true,
 	".webp": true, ".avif": true, ".tiff": true, ".bmp": true,
@@ -152,24 +197,43 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
+	// Dual-source routing: a valid exp+sig pair routes to the private S3
+	// bucket; no signature routes to the public source; an invalid or
+	// expired signature is a hard 403 — never a fallback to public.
+	privateRoute := false
+	if signingKey != "" {
+		ok, present := verifySignature(signingKey, cleanPath, q.Get("exp"), q.Get("sig"))
+		if present && !ok {
+			http.Error(w, "invalid or expired signature", http.StatusForbidden)
+			return
+		}
+		privateRoute = ok
+	}
+
 	var originalURL string
-	if sourceBaseURL != "" {
+	if privateRoute {
+		originalURL = s3.presignGetObject(cleanPath, presignTTL, time.Now())
+	} else if sourceBaseURL != "" {
 		originalURL = sourceBaseURL + cleanPath
 	} else {
 		originalURL = "https://" + host + cleanPath
 	}
 
-	// Strip imgproxy params from query, forward the rest to the origin.
+	// Strip imgproxy and signing params from query, forward the rest to the origin.
 	remaining := url.Values{}
 	for k, vs := range q {
-		if !imgproxyParams[k] {
+		if !imgproxyParams[k] && !signingParams[k] {
 			for _, v := range vs {
 				remaining.Add(k, v)
 			}
 		}
 	}
 	if len(remaining) > 0 {
-		originalURL += "?" + remaining.Encode()
+		sep := "?"
+		if strings.Contains(originalURL, "?") {
+			sep = "&"
+		}
+		originalURL += sep + remaining.Encode()
 	}
 
 	auto := ""
@@ -182,7 +246,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// Everything else (HTML, JS, CSS, images without params) passes directly to the origin.
 	var targetURL string
 	if processingOptions != "" && hasImageExtension(cleanPath) {
-		targetURL = imgproxyURL + fmt.Sprintf("/insecure/%s/plain/%s", processingOptions, originalURL)
+		source := originalURL
+		if privateRoute {
+			// Presigned URLs contain ? and & — escape before embedding in the imgproxy path.
+			source = url.QueryEscape(originalURL)
+		}
+		targetURL = imgproxyURL + fmt.Sprintf("/insecure/%s/plain/%s", processingOptions, source)
 	} else {
 		targetURL = originalURL
 	}
@@ -208,6 +277,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add(k, v)
 		}
 	}
+	if privateRoute {
+		// Signed URLs expire — responses must not be shared or cached long.
+		w.Header().Set("Cache-Control", "private, max-age=900")
+	}
 	w.WriteHeader(resp.StatusCode)
 
 	buf := make([]byte, 32*1024)
@@ -223,6 +296,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	if err := validateConfig(); err != nil {
+		log.Fatal(err)
+	}
+
 	if len(allowedOrigins) == 0 {
 		log.Println("WARNING: ALLOWED_ORIGINS not set — all origins are allowed (not recommended in production)")
 	} else {
@@ -237,6 +314,9 @@ func main() {
 	log.Printf("  imgproxy → %s", imgproxyURL)
 	if sourceBaseURL != "" {
 		log.Printf("  source base URL → %s", sourceBaseURL)
+	}
+	if signingKey != "" {
+		log.Printf("  dual-source mode → signed requests routed to s3://%s (via %s)", s3.bucket, s3.endpoint)
 	}
 
 	http.HandleFunc("/", handler)
