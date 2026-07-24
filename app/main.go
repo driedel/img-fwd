@@ -69,7 +69,7 @@ func parseAllowedOrigins(s string) map[string]bool {
 	for _, origin := range strings.Split(s, ",") {
 		origin = strings.TrimSpace(origin)
 		if origin != "" {
-			m[origin] = true
+			m[strings.ToLower(origin)] = true
 		}
 	}
 	return m
@@ -156,6 +156,46 @@ var signingParams = map[string]bool{
 	"exp": true, "sig": true,
 }
 
+// sensitiveParams are query params redacted from URLs before logging.
+var sensitiveParams = []string{"sig", "X-Amz-Signature", "X-Amz-Credential"}
+
+// redactURL masks sensitive query params (request signatures, S3 presign
+// material) so logs never contain reusable credentials.
+func redactURL(raw string) string {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return raw
+	}
+	q := u.Query()
+	changed := false
+	for _, p := range sensitiveParams {
+		if q.Has(p) {
+			q.Set(p, "REDACTED")
+			changed = true
+		}
+	}
+	if !changed {
+		return raw
+	}
+	u.RawQuery = q.Encode()
+	return u.String()
+}
+
+// hopByHopAndSensitiveHeaders must not be forwarded from the client to the
+// upstream (imgproxy/origin/S3): hop-by-hop headers are per-connection by
+// spec, and Authorization could leak a client credential to the origin.
+var droppedRequestHeaders = map[string]bool{
+	"Authorization":       true,
+	"Proxy-Authorization": true,
+	"Connection":          true,
+	"Keep-Alive":          true,
+	"Proxy-Authenticate":  true,
+	"Te":                  true,
+	"Trailer":             true,
+	"Transfer-Encoding":   true,
+	"Upgrade":             true,
+}
+
 var imageExtensions = map[string]bool{
 	".jpg": true, ".jpeg": true, ".png": true,
 	".webp": true, ".avif": true, ".tiff": true, ".bmp": true,
@@ -170,6 +210,14 @@ func hasImageExtension(path string) bool {
 	return imageExtensions[strings.ToLower(path[dot:])]
 }
 
+// upstreamClient guards against hung upstreams; no global Timeout so large
+// image bodies can stream freely.
+var upstreamClient = &http.Client{
+	Transport: &http.Transport{
+		ResponseHeaderTimeout: 15 * time.Second,
+	},
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/healthz" {
 		w.WriteHeader(http.StatusOK)
@@ -179,7 +227,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	// Use the Host header to reconstruct the original image URL transparently.
 	// Strip port if present (e.g. "cdn.examplesite.com:443" → "cdn.examplesite.com").
-	host := r.Host
+	// DNS names are case-insensitive, so normalize before the origin check.
+	host := strings.ToLower(r.Host)
 	if h, _, err := net.SplitHostPort(host); err == nil {
 		host = h
 	}
@@ -256,16 +305,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		targetURL = originalURL
 	}
 
-	log.Printf("%s %s (host: %s) → %s", r.Method, r.URL.RequestURI(), host, targetURL)
+	// %q quotes user-controlled values, escaping control characters.
+	log.Printf("%q %q (host: %q) → %q", r.Method, r.URL.RequestURI(), host, redactURL(targetURL)) // #nosec G706 -- all user-controlled values are %q-quoted
 
-	proxyReq, err := http.NewRequest(r.Method, targetURL, nil)
+	// SSRF (G704) is inherent to a proxy: the target URL derives from the
+	// request Host. Exposure is bounded by ALLOWED_ORIGINS and, in dual-source
+	// mode, by HMAC-signed routing.
+	proxyReq, err := http.NewRequest(r.Method, targetURL, nil) // #nosec G704 -- proxy by design; origin allowlist + signature gate
 	if err != nil {
 		http.Error(w, "failed to build request", http.StatusInternalServerError)
 		return
 	}
 	proxyReq.Header = r.Header.Clone()
+	for h := range droppedRequestHeaders {
+		proxyReq.Header.Del(h)
+	}
 
-	resp, err := http.DefaultClient.Do(proxyReq)
+	resp, err := upstreamClient.Do(proxyReq) // #nosec G704 -- proxy by design; origin allowlist + signature gate
 	if err != nil {
 		http.Error(w, "failed to reach imgproxy", http.StatusBadGateway)
 		return
@@ -287,7 +343,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	for {
 		n, err := resp.Body.Read(buf)
 		if n > 0 {
-			w.Write(buf[:n])
+			if _, werr := w.Write(buf[:n]); werr != nil {
+				break
+			}
 		}
 		if err != nil {
 			break
@@ -320,7 +378,14 @@ func main() {
 	}
 
 	http.HandleFunc("/", handler)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	// ReadHeaderTimeout mitigates Slowloris (G114); WriteTimeout stays 0 so
+	// large streamed images are never cut off.
+	server := &http.Server{
+		Addr:              ":" + port,
+		ReadHeaderTimeout: 10 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
 }
