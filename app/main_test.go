@@ -632,3 +632,104 @@ func TestHandlerNoSigningKeyIgnoresSignature(t *testing.T) {
 		t.Errorf("expected normal imgproxy routing, got %q", capturedURI)
 	}
 }
+
+// --- security ---
+
+func TestHandlerHostCaseInsensitive(t *testing.T) {
+	mock := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer mock.Close()
+
+	origImgproxy, origSource, origOrigins := imgproxyURL, sourceBaseURL, allowedOrigins
+	defer func() { imgproxyURL, sourceBaseURL, allowedOrigins = origImgproxy, origSource, origOrigins }()
+
+	imgproxyURL = mock.URL
+	sourceBaseURL = ""
+	allowedOrigins = map[string]bool{"cdn.example.com": true}
+
+	// DNS names are case-insensitive — a mixed-case Host must not be rejected.
+	req := httptest.NewRequest("GET", "/image.jpg?rs=600", nil)
+	req.Host = "CDN.Example.COM"
+	rr := httptest.NewRecorder()
+	handler(rr, req)
+
+	if rr.Code == http.StatusForbidden {
+		t.Error("mixed-case Host of an allowed origin must be accepted")
+	}
+}
+
+func TestParseAllowedOriginsLowercasesEntries(t *testing.T) {
+	got := parseAllowedOrigins("CDN.Example.COM")
+	if !got["cdn.example.com"] {
+		t.Error("allowed origins must be stored lowercased")
+	}
+}
+
+func TestHandlerStripsSensitiveClientHeaders(t *testing.T) {
+	var gotAuth, gotConnection, gotUA string
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotAuth = r.Header.Get("Authorization")
+		gotConnection = r.Header.Get("Connection")
+		gotUA = r.Header.Get("User-Agent")
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer upstream.Close()
+
+	origImgproxy, origSource, origOrigins := imgproxyURL, sourceBaseURL, allowedOrigins
+	defer func() { imgproxyURL, sourceBaseURL, allowedOrigins = origImgproxy, origSource, origOrigins }()
+
+	imgproxyURL = "http://imgproxy-should-not-be-called"
+	sourceBaseURL = upstream.URL
+	allowedOrigins = map[string]bool{}
+
+	req := httptest.NewRequest("GET", "/icon.svg", nil)
+	req.Header.Set("Authorization", "Bearer client-secret-token")
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("User-Agent", "img-fwd-test")
+	rr := httptest.NewRecorder()
+	handler(rr, req)
+
+	if gotAuth != "" {
+		t.Errorf("client Authorization header leaked upstream: %q", gotAuth)
+	}
+	if gotConnection != "" {
+		t.Errorf("hop-by-hop Connection header leaked upstream: %q", gotConnection)
+	}
+	if gotUA != "img-fwd-test" {
+		t.Errorf("regular headers must still be forwarded, got User-Agent %q", gotUA)
+	}
+}
+
+func TestRedactURL(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  string
+	}{
+		{
+			"presigned s3 url",
+			"http://minio:9000/b/k.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKID%2F20250615%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=abc123",
+			"X-Amz-Signature=REDACTED",
+		},
+		{
+			"app signature",
+			"http://origin/img.jpg?exp=1750000000&sig=deadbeef",
+			"sig=REDACTED",
+		},
+	}
+	for _, tt := range tests {
+		got := redactURL(tt.input)
+		if !strings.Contains(got, tt.want) {
+			t.Errorf("%s: expected %q in redacted URL, got %q", tt.name, tt.want, got)
+		}
+		if strings.Contains(got, "abc123") || strings.Contains(got, "deadbeef") || strings.Contains(got, "AKID") {
+			t.Errorf("%s: sensitive material still present in %q", tt.name, got)
+		}
+	}
+
+	plain := "http://origin/img.jpg?v=2"
+	if got := redactURL(plain); got != plain {
+		t.Errorf("URL without sensitive params must be returned unchanged, got %q", got)
+	}
+}

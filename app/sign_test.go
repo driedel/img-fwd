@@ -74,6 +74,23 @@ func TestVerifySignatureMalformedExp(t *testing.T) {
 	}
 }
 
+func TestVerifySignatureOverflowExp(t *testing.T) {
+	huge := "99999999999999999999999999"
+	sig := computeSignature(testSigningKey, "/img.jpg", huge)
+	ok, present := verifySignature(testSigningKey, "/img.jpg", huge, sig)
+	if ok || !present {
+		t.Errorf("expected overflowing exp to fail (ok=false, present=true), got ok=%v present=%v", ok, present)
+	}
+}
+
+func TestVerifySignatureNegativeExp(t *testing.T) {
+	sig := computeSignature(testSigningKey, "/img.jpg", "-1")
+	ok, present := verifySignature(testSigningKey, "/img.jpg", "-1", sig)
+	if ok || !present {
+		t.Errorf("expected negative exp to fail (ok=false, present=true), got ok=%v present=%v", ok, present)
+	}
+}
+
 func TestComputeSignatureDeterministic(t *testing.T) {
 	a := computeSignature(testSigningKey, "/img.jpg", "1750000000")
 	b := computeSignature(testSigningKey, "/img.jpg", "1750000000")
