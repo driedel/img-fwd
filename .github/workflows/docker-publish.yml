@@ -65,8 +65,7 @@ jobs:
           push: false
           load: true
           tags: img-fwd:scan
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # No cache: the scan must reflect exactly what the current source produces.
 
       - name: Trivy scan
         uses: aquasecurity/trivy-action@v0.36.0
