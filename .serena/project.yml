@@ -152,7 +152,7 @@ added_modes:
 initial_prompt: |
   img-fwd: compact Go proxy in front of imgproxy. Source in app/ (entry: app/main.go), Docker config at repo root.
   - Local Go toolchain exists ONLY for gopls. All go test/build/vet/mod commands MUST run via Docker:
-    docker run --rm -v "$PWD/app:/app" -w /app golang:1.25-alpine go test ./...
+    docker run --rm -v "$PWD/app:/app" -w /app golang:1.26-alpine go test ./...
   - Routing: image paths with transformation params go through imgproxy; everything else passes through to the origin.
   - Dual-source mode: when SIGNING_KEY + S3_* envs are set, requests with a valid exp+sig HMAC signature are routed to a private S3 bucket (presigned GetObject); unsigned requests go to the public source; invalid signatures get 403.
   - See AGENTS.md for full conventions (ports, env vars, demo deploy).

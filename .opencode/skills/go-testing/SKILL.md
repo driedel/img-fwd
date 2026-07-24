@@ -10,19 +10,19 @@ description: Use when running, writing, or debugging Go tests in this repo. Go i
 ## Run all tests
 
 ```bash
-docker run --rm -v "$PWD/app:/app" -w /app golang:1.25-alpine go test -v ./...
+docker run --rm -v "$PWD/app:/app" -w /app golang:1.26-alpine go test -v ./...
 ```
 
 ## Run a specific test
 
 ```bash
-docker run --rm -v "$PWD/app:/app" -w /app golang:1.25-alpine go test -v -run TestHandlerHealthz ./...
+docker run --rm -v "$PWD/app:/app" -w /app golang:1.26-alpine go test -v -run TestHandlerHealthz ./...
 ```
 
 ## Check coverage
 
 ```bash
-docker run --rm -v "$PWD/app:/app" -w /app golang:1.25-alpine go test -cover ./...
+docker run --rm -v "$PWD/app:/app" -w /app golang:1.26-alpine go test -cover ./...
 ```
 
 ## Test patterns used in this repo
