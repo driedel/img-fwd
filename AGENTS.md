@@ -1,18 +1,16 @@
 # img-fwd — Agent Notes
 
-> **Claude users:** See `CLAUDE.md` for identical instructions.
-
 Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at repo root.
 
 ## Development
 
-- **Go is NOT installed locally.** All Go commands (test, build, mod) must run via Docker.
-- **Go module:** `app/`
+- **All Go commands (test, build, mod) must run via Docker.** A local Go toolchain exists only for editor tooling (gopls/Serena).
+- **Go module:** `app/` (Go 1.25)
 - **Run tests:**
   ```bash
   docker run --rm -v "$PWD/app:/app" -w /app golang:1.25-alpine go test -v ./...
   ```
-- **No linter / typecheck config present.** The only verification step is `go test` via Docker.
+- **Security checks** (same as CI): `gosec ./...` and `govulncheck ./...` inside `golang:1.25-alpine`; fuzz via `go test -run=NONE -fuzz=FuzzVerifySignature -fuzztime=30s .`
 
 ## Running locally
 
@@ -26,7 +24,20 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 ## Build & deploy
 
 - **Docker build context:** repo root (Dockerfile copies from `app/`).
-- **CI:** Tests run on every push to `main`. Docker image `driedel/img-fwd` is built and pushed **only on version tags** (`v*`). Multi-platform: `linux/amd64,linux/arm64`.
+- **CI:** Tests + fuzz + security gates (gosec, govulncheck, Trivy image scan) run on every push to `main` and on PRs. Docker image `driedel/img-fwd` is built and pushed **only on version tags** (`v*`). Multi-platform: `linux/amd64,linux/arm64`.
+- **Dependabot:** weekly PRs keep GitHub Actions, Go modules and Docker base images up to date.
+
+### Fly.io (production)
+
+Two apps on Fly.io, both in region `gru` (São Paulo):
+
+| App | What it serves | When to redeploy |
+|---|---|---|
+| `img-fwd` | Go proxy | After CI pushes a new Docker image (post version tag) |
+| `img-fwd-demo-static` | Demo site (nginx) | When any file in `demo/` changes |
+
+- The proxy pulls `driedel/img-fwd:latest` from Docker Hub — no local build needed.
+- **Always use the deploy script** (see "Deploy the demo" below) — it handles both apps, checks auth, and verifies status.
 
 ## Key runtime behavior
 
@@ -38,6 +49,7 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
   - Image paths go through imgproxy **only when transformation params are present**; otherwise they pass through to origin.
 - **Auto-format:** `.jpg/.png/.webp/.tiff/.bmp` → AVIF; `.gif/.svg/.ico/.avif` passthrough. Explicit `f=` overrides auto-format.
 - **Query param forwarding:** non-imgproxy params (`v=2`, `cache=1`, etc.) are forwarded to the origin URL, not imgproxy.
+- **Dual-source mode:** when `SIGNING_KEY` + `S3_*` envs are set, requests with a valid `exp`+`sig` HMAC-SHA256 signature route to a private S3/MinIO bucket (SigV4 presigned GetObject); invalid/expired → 403; unsigned → public source only. Private responses get `Cache-Control: private, max-age=900`. Startup fails fast if `SIGNING_KEY` is set without full S3 config. See README for the signing scheme.
 - **Health:** `GET /healthz` → `200 ok`.
 
 ## Demo Site
