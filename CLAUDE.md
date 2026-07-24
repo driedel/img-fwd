@@ -10,7 +10,7 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 - **Go module:** `app/`
 - **Run tests:**
   ```bash
-  docker run --rm -v "$PWD/app:/app" -w /app golang:1.22-alpine go test -v ./...
+  docker run --rm -v "$PWD/app:/app" -w /app golang:1.25-alpine go test -v ./...
   ```
 - **No linter / typecheck config present.** The only verification step is `go test` via Docker.
 
