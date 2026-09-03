@@ -32,6 +32,15 @@ https://cdn.examplesite.com/marketing/image.png?f=avif&rs=600
 
 ---
 
+## Routing rules
+
+1. `/healthz` → returns `200 ok` immediately.
+2. Non-image paths (`.html`, `.js`, `.css`, `.json`, etc.) are forwarded to the origin directly, even if transformation params are present.
+3. Image paths without transformation params are forwarded to the origin directly (no imgproxy round-trip).
+4. Image paths with transformation params are processed by imgproxy with the requested options.
+
+---
+
 ## Configuration
 
 | Variable | Required | Description | Example |
