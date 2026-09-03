@@ -1,3 +1,3 @@
 module github.com/driedel/img-fwd
 
-go 1.26
+go 1.27

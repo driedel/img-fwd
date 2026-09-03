@@ -5,12 +5,12 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 ## Development
 
 - **All Go commands (test, build, mod) must run via Docker.** A local Go toolchain exists only for editor tooling (gopls/Serena).
-- **Go module:** `app/` (Go 1.26)
+- **Go module:** `app/` (Go 1.27)
 - **Run tests:**
   ```bash
-  docker run --rm -v "$PWD/app:/app" -w /app golang:1.26-alpine go test -v ./...
+  docker run --rm -v "$PWD/app:/app" -w /app golang:1.27-alpine go test -v ./...
   ```
-- **Security checks** (same as CI): `gosec ./...` and `govulncheck ./...` inside `golang:1.26-alpine`; fuzz via `go test -run=NONE -fuzz=FuzzVerifySignature -fuzztime=30s .`
+- **Security checks** (same as CI): `gosec ./...` and `govulncheck ./...` inside `golang:1.27-alpine`; fuzz via `go test -run=NONE -fuzz=FuzzVerifySignature -fuzztime=30s .`
 
 ## Running locally
 

@@ -31,13 +31,13 @@ cat Dockerfile
 > Go is not installed locally — use Docker for these commands.
 
 ```bash
-docker run --rm -v "$PWD/app:/app" -w /app golang:1.26-alpine go list -m all
+docker run --rm -v "$PWD/app:/app" -w /app golang:1.27-alpine go list -m all
 ```
 
 - Verify no unexpected or deprecated dependencies.
 - If `govulncheck` is available, run:
   ```bash
-  docker run --rm -v "$PWD/app:/app" -w /app golang:1.26-alpine sh -c "go install golang.org/x/vuln/cmd/govulncheck@latest && govulncheck ./..."
+  docker run --rm -v "$PWD/app:/app" -w /app golang:1.27-alpine sh -c "go install golang.org/x/vuln/cmd/govulncheck@latest && govulncheck ./..."
   ```
 
 ### 4. Header / proxy behavior
