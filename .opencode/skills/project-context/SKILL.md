@@ -27,7 +27,7 @@ Browser → img-fwd (Go) → imgproxy (:8080) → origin (Host header or SOURCE_
 | `app/main.go` | Entrypoint, request routing, param mapping, origin reconstruction |
 | `app/main_test.go` | Unit tests using `httptest` to mock imgproxy and origin |
 | `docker/entrypoint.sh` | Container startup — launches imgproxy then img-fwd |
-| `Dockerfile` | Multi-stage: `golang:1.27-alpine` builder → `darthsim/imgproxy:latest` runtime |
+| `Dockerfile` | Multi-stage: `golang:1.27-alpine` builder → `darthsim/imgproxy:v4.0.14` runtime |
 
 ## Query param → imgproxy mapping
 

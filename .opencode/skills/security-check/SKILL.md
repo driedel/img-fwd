@@ -23,7 +23,7 @@ cat Dockerfile
 ```
 
 - Multi-stage build is required (builder + runtime).
-- Runtime base is `darthsim/imgproxy:latest` — verify it does not run as root if possible.
+- Runtime base is `darthsim/imgproxy:v4.0.14` — verify it does not run as root if possible.
 - `entrypoint.sh` should not leak env vars in logs.
 
 ### 3. Go dependencies

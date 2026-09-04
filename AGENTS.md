@@ -27,6 +27,10 @@ Compact Go proxy in front of imgproxy. Source lives in `app/`, Docker config at 
 - **CI:** Tests + fuzz + security gates (gosec, govulncheck, Trivy image scan) run on every push to `main` and on PRs. Docker image `driedel/img-fwd` is built and pushed **only on version tags** (`v*`). Multi-platform: `linux/amd64,linux/arm64`.
 - **Dependabot:** weekly PRs keep GitHub Actions, Go modules and Docker base images up to date.
 
+### imgproxy base image policy
+
+The runtime base is **pinned** to a specific imgproxy version (currently `darthsim/imgproxy:v4.0.14`) — never `latest`, so builds are reproducible and a upstream retag cannot silently change what ships. When imgproxy releases a new version, Dependabot (docker ecosystem) opens a PR updating the pin; validate that build and merge, then cut a new img-fwd tag. To check manually for a newer version: `docker buildx imagetools inspect darthsim/imgproxy:latest` and compare against the pinned tag.
+
 ### Fly.io (production)
 
 Two apps on Fly.io, both in region `gru` (São Paulo):
@@ -144,7 +148,7 @@ Use the deploy script to deploy both apps:
 
 - App entry: `app/main.go` (`package main`)
 - Docker entrypoint: `docker/entrypoint.sh` (starts imgproxy on `:8080`, then `img-fwd`)
-- Base image: `darthsim/imgproxy:latest`; Go binary built via multi-stage `Dockerfile`.
+- Base image: `darthsim/imgproxy:v4.0.14`; Go binary built via multi-stage `Dockerfile`.
 
 
 <!-- headroom:rtk-instructions -->

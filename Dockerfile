@@ -6,7 +6,7 @@ RUN go mod download
 COPY app/ .
 RUN CGO_ENABLED=0 GOOS=linux go build -o img-fwd .
 
-FROM darthsim/imgproxy:latest
+FROM darthsim/imgproxy:v4.0.14
 COPY --from=builder /app/img-fwd /usr/local/bin/img-fwd
 COPY --chmod=755 docker/entrypoint.sh /entrypoint.sh
 
