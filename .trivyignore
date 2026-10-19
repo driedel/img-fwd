@@ -1,8 +1,6 @@
-# Vulnerabilities found in the upstream imgproxy binary shipped by the base
-# image (darthsim/imgproxy:v4.0.14). We cannot patch the upstream binary, and
-# neither issue is reachable through our deployment: imgproxy does not serve
-# gRPC/xDS (the grpc dep comes from its observability stack) and it does not
-# use os.Root on request-controlled paths. Our own binary (usr/local/bin/img-fwd)
-# scans clean. Revisit these entries whenever the base image is updated.
-GHSA-hrxh-6v49-42gf
-CVE-2026-39822
+# Vulnerabilities in the upstream imgproxy binary shipped by the base image
+# (darthsim/imgproxy). We cannot patch the upstream binary; only add entries
+# here with a reachability justification, and revisit them whenever the base
+# image pin changes.
+#
+# Currently no entries: the pinned base (v4.0.18) scans clean.
