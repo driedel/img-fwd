@@ -44,7 +44,10 @@ jobs:
 
       - name: Run gosec
         run: |
-          go install github.com/securego/gosec/v2/cmd/gosec@latest
+          # Pinned to a post-v2.29.0 commit: v2.29.0 bundles golang.org/x/tools
+          # v0.49.0, which cannot read Go 1.27.2's export data (version 5).
+          # Switch back to @latest once a release > v2.29.0 is out.
+          go install github.com/securego/gosec/v2/cmd/gosec@707f2271f665
           cd app && gosec ./...
 
       - name: Run govulncheck
